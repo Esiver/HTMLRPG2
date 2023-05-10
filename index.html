@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+    <script>
+        const GAME = new Object();
+    </script>
+    <script type="text/javascript" src="/assets/script/PlayerController.js"></script>
+
+    <script type="text/javascript" src="/assets/script/InputController.js"></script>
+    <script type="text/javascript" src="/assets/script/EntityController.js"></script>
+    <script type="text/javascript" src="/assets/script/TileController.js"></script>
+    <script type="text/javascript" src="/assets/script/TimeController.js"></script>
+
+    <script type="text/javascript" src="/assets/script/index.js"></script>
+
+</head>
+<body>
+    <canvas id="map" style="border: 1px solid;">
+
+    </canvas>
+    <div class="container" id="select-container">
+        <h2 id="select-name"></h2>
+
+    </div>
+
+</body>
+
+<script>
+    
+
+    let worldSettings = {
+        canvas: {
+            selector: "#map",
+            height: 600,
+            width: 600
+        },
+        selectDom: {
+            container : "#select-container",
+            name: "#select-name"
+        },
+        xTiles: 20,
+        yTiles: 20,
+        environment: {
+            tundraNorth: 0.1,
+            tundraSouth: 0.9,
+            tropicNorth: 0.4,
+            tropicSouth: 0.6,
+            humidity: 0.25
+        }
+    }
+
+    let gameInstance = new GAME.GameScreen("", worldSettings);
+     
+</script>
+
+</html>
+
+<!-- todo -->
+<!-- 1) entity markup -->
+<!-- 2) immortal movement -->
+<!-- 3) tidens gang? -->
+
