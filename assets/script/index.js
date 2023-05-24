@@ -51,16 +51,19 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     }
     function movePlayerLeft(){
         let relevantTiles = gameState.currentSelectTile;
-        // let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
-        let entitiesToMove = gameState.playerEntity;
-        // _EntityController.moveEntity()
-        // consoleLog(entitiesToMove)
-        console.log('actives>',gameState)
+        let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+
+        
+
+        console.log('actives>', entitiesToMove)
 
         entitiesToMove.forEach(entity =>{
-
             entity.moveEntityX(-1, gameState)
         });
+
+        // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
+        moveSelectX(-1, gameState.currentSelectTile);
+
     }
     function movePlayerRight(){
         // let selectTiles = gameState.currentSelectTile;
@@ -123,6 +126,30 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         clearSelect();
         gameState.currentSelectTile.push(tile);
         tile.select();
+    }
+    function moveSelectX(dir, selectTileList) {
+        console.log("moveCursorX", dir, gameState)
+        
+        // each tile ...
+        selectTileList.forEach(oldTile => {
+            
+            let tileY = oldTile.y
+            let oldX = oldTile.x
+            
+            let newX = oldX + dir
+            let targetTile = gameState.tileMap[newX][tileY]
+            console.log("lol", oldX, newX, targetTile)
+            handleSelectTile(targetTile)
+
+            // we move them x
+
+        })
+        
+
+        
+    }
+    function moveCursorY(dir, gamestate) {
+
     }
 
     
@@ -193,6 +220,8 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     _EntityController.createConstructionEntity(123123, {xPos: 3, yPos: 2}, cStats, worldSettings, gameState);
     _EntityController.createConstructionEntity(123123, {xPos: 4, yPos: 3}, cStats, worldSettings, gameState);
     _EntityController.createImmortalEntity(3123123,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
+    _EntityController.createImmortalEntity(3123123,{xPos: 5, yPos: 15},cStats, worldSettings, gameState)
+
     // gameState.activeEntityTile.push(gameState.tileMap[3][3]);
     
 

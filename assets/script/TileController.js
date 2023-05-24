@@ -24,7 +24,6 @@ GAME.TileController = function (settings, game) {
             worldSettings.ctx.fillStyle ="black"; // fallback
             worldSettings.ctx.fillStyle = color
 
-
             worldSettings.ctx.fillRect(
                 this.x * worldSettings.tileWidth, 
                 this.y * worldSettings.tileHeight, 
@@ -41,10 +40,8 @@ GAME.TileController = function (settings, game) {
             let isTileEmpty = this.inhibits.length == 0 ? true : false;
             
             if (isTileEmpty && gameState != void 0) {
-                console.log('isTileEmpty 。。。 ',gameState)
                 let indexToRemove = gameState.activeEntityTile.findIndex(activeTile => activeTile === this);
                 if (indexToRemove !== -1){
-                    console.log("i want to splice!")
                     gameState.activeEntityTile.splice(indexToRemove, 1);
                 }  
             } else {
@@ -57,6 +54,7 @@ GAME.TileController = function (settings, game) {
                 this.displayTileInhibits(entity)
             });
         }
+        
         removeEntity(entity, gameState){
             this.inhibits = this.inhibits.filter(inhibitingEntity => inhibitingEntity != entity);
             
@@ -120,7 +118,6 @@ GAME.TileController = function (settings, game) {
                 entityList.push(entity);
             })
         })
-
         return entityList;
     }
 
