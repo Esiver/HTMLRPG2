@@ -14,78 +14,60 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     worldSettings.tileWidth = tileWidth
 
     let gameState = {
+        multiSelectMode : false,
+
         playerEntity: [],
         unitEntityList: [],
         constructionEntityList : [],
         immortalEntityList: [],
+        currentSelectEntity: [],
 
         activeEntityTile: [], // all tiles that have entities, and should be listened to.
         currentSelectTile: [], // selected by the user, possibly by click
-        currentHoverTile: [] // mouse hover
+        currentHoverTile: [], // mouse hover
 
-        
+        tickCount:0,
     };
 
-    let _TileController = GAME.TileController();
+    let _TileController = GAME.TileController(worldSettings, gameState);
     let _PlayerController = GAME.PlayerController();
     let _InputController = GAME.InputController(worldSettings, 
         {
-            onArrowLeft: movePlayerLeft,
-            onArrowRight:movePlayerRight,
-            onArrowUp:movePlayerUp,
-            onArrowDown:movePlayerDown,
+            // onArrowLeft: moveEntityLeft,
+            // onArrowRight:moveEntityRight,
+            // onArrowUp:moveEntityUp,
+            // onArrowDown:moveEntityDown,
+            onArrowLeft: moveCursorLeft,
+            onArrowRight: moveCursorRight,
+            onArrowUp: moveCursorUp,
+            onArrowDown: moveCursorDown,
             onEscape: clearSelect
         });
-    let _EntityController = GAME.EntityController();
+    let _EntityController = GAME.EntityController(worldSettings, gameState);
     let _TimeController = GAME.TimeController();
 
+
+
+
+
+
+
     function createWorld(settings) {
+        //setup world
         createTiles(settings)
+
+        // setup eventlisteners
         canvas.onclick = handleMouseClick;
         canvas.onmousemove = handleMouseMove;
 
+        // start timer
+        // timeTicker()
     }
 
     function consoleLog(msg){
         console.log("clog: ", msg)
     }
-    function movePlayerLeft(){
-        let relevantTiles = gameState.currentSelectTile;
-        let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
-
-        
-
-        console.log('actives>', entitiesToMove)
-
-        entitiesToMove.forEach(entity =>{
-            entity.moveEntityX(-1, gameState)
-        });
-
-        // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
-        moveSelectX(-1, gameState.currentSelectTile);
-
-    }
-    function movePlayerRight(){
-        // let selectTiles = gameState.currentSelectTile;
-        // let entitiesToMove = gameState.playerEntity;//_TileController.getAllTileEntities(selectTiles);
-        
-        let relevantTiles = gameState.currentSelectTile;
-        // let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
-        let entitiesToMove = gameState.playerEntity;
-        entitiesToMove.forEach(entity =>{
-            entity.moveEntityX(1, gameState)
-        });
-    }
-    function movePlayerUp(){
-        let entitiesToMove = gameState.playerEntity;
-        entitiesToMove.forEach(entity=>{
-            entity.moveEntityY(-1, gameState)
-        });
-    }
-    function movePlayerDown(){
-
-    }
-
+    
     function createTiles(settings) {
         gameState.tileMap = new Array(settings.xTiles);
         // Create your points and add them to the points array.
@@ -113,6 +95,8 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         gameState.currentHoverTile.push(getTileFromCursor(cursor));
     }
 
+
+    // selection
     function handleMouseClick(e) {
         let cursor = new _TileController.Cursor(e.offsetX, e.offsetY);
         let tile = getTileFromCursor(cursor);
@@ -124,33 +108,118 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     }
     function handleSelectTile(tile) {
         clearSelect();
-        gameState.currentSelectTile.push(tile);
-        tile.select();
-    }
-    function moveSelectX(dir, selectTileList) {
-        console.log("moveCursorX", dir, gameState)
+        tile.select(gameState);
         
-        // each tile ...
-        selectTileList.forEach(oldTile => {
-            
+        // let tileEntityList = _TileController.getAllTileEntities(tile)
+        // console.log("tileEntityList",tileEntityList)
+        // _TileController.
+        // handleSelectEntity(tileEntityList);
+    }
+    function handleSelectEntity(entityList){
+        console.log(entityList)
+        // gameState.currentSelectEntity.push(entity);
+    }
+
+
+
+    // movement
+    function moveCursorLeft(){
+        gameState.currentSelectTile.forEach(oldTile => {
             let tileY = oldTile.y
             let oldX = oldTile.x
-            
+            let newX = oldX - 1
+            let targetTile = gameState.tileMap[newX][tileY]
+            handleSelectTile(targetTile)
+        })
+    }
+    function moveCursorRight(){
+        gameState.currentSelectTile.forEach(oldTile => {
+            let tileY = oldTile.y
+            let oldX = oldTile.x
+            let newX = oldX + 1
+            let targetTile = gameState.tileMap[newX][tileY]
+            handleSelectTile(targetTile)
+        })
+    }
+    function moveCursorUp(){
+        gameState.currentSelectTile.forEach(oldTile => {
+            let tileX = oldTile.x
+            let oldY = oldTile.y
+            let newY = oldY - 1
+            let targetTile = gameState.tileMap[tileX][newY]
+            handleSelectTile(targetTile)
+        })
+    }
+    function moveCursorDown(){
+        gameState.currentSelectTile.forEach(oldTile => {
+            let tileX = oldTile.x;
+            let oldY = oldTile.y;
+            let newY = oldY + 1;
+            let targetTile = gameState.tileMap[tileX][newY];
+            handleSelectTile(targetTile);
+        })
+    }
+    function moveSelectX(dir, selectTileList) {
+        selectTileList.forEach(oldTile => {
+            let tileY = oldTile.y
+            let oldX = oldTile.x
             let newX = oldX + dir
             let targetTile = gameState.tileMap[newX][tileY]
-            console.log("lol", oldX, newX, targetTile)
+            
             handleSelectTile(targetTile)
-
-            // we move them x
-
         })
-        
-
-        
     }
-    function moveCursorY(dir, gamestate) {
+
+
+    
+    function moveEntityLeft(){
+        let relevantTiles = gameState.currentSelectTile;
+        // let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        let entitiesToMove = gameState.currentSelectEntity
+
+        entitiesToMove.forEach(entity =>{
+            entity.moveEntityX(-1, gameState)
+        });
+
+        // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
+        moveSelectX(-1, gameState.currentSelectTile);
 
     }
+    function moveEntityRight(){
+        let relevantTiles = gameState.currentSelectTile;
+        let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        entitiesToMove.forEach(entity =>{
+            entity.moveEntityX(1, gameState)
+        });
+
+        // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
+        moveSelectX(1, gameState.currentSelectTile);
+    }
+    function moveEntityUp(){
+        let relevantTiles = gameState.currentSelectTile;
+        let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        entitiesToMove.forEach(entity =>{
+            entity.moveEntityY(-1, gameState)
+        });
+
+        // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
+        moveSelectY(-1, gameState.currentSelectTile);
+    }
+    function moveEntityDown(){
+        let relevantTiles = gameState.currentSelectTile;
+        let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        entitiesToMove.forEach(entity =>{
+            console.log("move ENTITY down")
+
+            entity.moveEntityY(1, gameState)
+        });
+
+        // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
+        moveSelectY(1, gameState.currentSelectTile);
+    }
+
+    
+
 
     
 
@@ -208,8 +277,15 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         setTimeout(function () {
             animate()
         }, 56);
+        
 
-
+    }
+    function timeTicker(){
+        setTimeout(function(){
+            console.log("tick")
+            gameState.tickCount ++;
+            timeTicker()
+        }, 460)
     }
 
     createWorld(worldSettings);
@@ -220,7 +296,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     _EntityController.createConstructionEntity(123123, {xPos: 3, yPos: 2}, cStats, worldSettings, gameState);
     _EntityController.createConstructionEntity(123123, {xPos: 4, yPos: 3}, cStats, worldSettings, gameState);
     _EntityController.createImmortalEntity(3123123,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
-    _EntityController.createImmortalEntity(3123123,{xPos: 5, yPos: 15},cStats, worldSettings, gameState)
+    _EntityController.createImmortalEntity(3123123,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
 
     // gameState.activeEntityTile.push(gameState.tileMap[3][3]);
     

@@ -1,4 +1,6 @@
-GAME.EntityController = function (settings){
+GAME.EntityController = function (settings,gameState){
+
+    let _MarkupController = GAME.MarkupController(settings);
 
     class Entity {
         constructor(id, tile, entitySettings){
@@ -35,28 +37,42 @@ GAME.EntityController = function (settings){
 
             // remove self from current tile
             console.log(currentTile,`move from ${currentCoordinateX} to ${targetCoordinateX}`)
-            // currentTile.x = targetCoordinateX
             this.tile = targetTile;
 
             currentTile.removeEntity(entitySelf, gameState);
             targetTile.addEntity(entitySelf, gameState);
             currentTile.update()
             targetTile.update();
-            // console.log(currentTile, targetTile)
-            // currentTile.inhibits.filter()
-            // currentTile.inhibits.forEach((inhibitingEntity, index) => {
 
-            //     if(entitySelf == inhibitingEntity) {
-            //         console.log('its me!')
-            //     }
-            // });
-            // targetTile.inhibits.push(this)
 
         }
+        moveEntityY(dir, gameState){
+            let entitySelf = this;
+            let currentTile = this.tile;
+            let currentCoordinateX = currentTile.x;
+            let currentCoordinateY = currentTile.y
+
+            let targetCoordinateY = currentCoordinateY + dir;
+            let targetTile = gameState.tileMap[currentCoordinateX][targetCoordinateY]
+
+            console.log("moveEntityY to targetTile", targetTile)
+
+            // remove self from current tile
+            // console.log(currentTile,`move from ${currentCoordinateX} to ${targetCoordinateX}`)
+            this.tile = targetTile;
+            currentTile.removeEntity(entitySelf, gameState);
+            targetTile.addEntity(entitySelf, gameState);
+            currentTile.update()
+            targetTile.update();
+        }
+
         moveEntity(toTile, gameState){
             console.log('moveEntity', toTile, this)
             toTile.inhibits.push(this)
 
+        }
+        select(){
+            console.log("selecting entity:", this)
         }
     }
 
