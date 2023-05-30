@@ -27,6 +27,11 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         currentHoverTile: [], // mouse hover
 
         tickCount:0,
+
+
+        handleSelectEntity: function (entityList){
+            consoleLog(entityList)
+        }
     };
 
 
@@ -106,13 +111,13 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     }
     function clearSelect(){
         gameState.currentSelectTile = [];
-        _MarkupController.clearSelect()
+        _MarkupController.clearSelectTile()
+        _MarkupController.clearSelectEntity()
         // document.querySelector(worldSettings.selectDom.name).innerText = ""
     }
     function handleSelectTile(tile) {
         clearSelect();
         tile.select(gameState);
-        
     }
     function handleSelectEntity(entityList){
         console.log(entityList)
@@ -294,8 +299,8 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     // _EntityController.createImmortalEntity(123123, {xPos: 8, yPos: 2, isPlayer:true}, cStats, worldSettings, gameState);
     _EntityController.createConstructionEntity(123123, {xPos: 3, yPos: 2}, cStats, worldSettings, gameState);
     _EntityController.createConstructionEntity(123123, {xPos: 4, yPos: 3}, cStats, worldSettings, gameState);
-    _EntityController.createImmortalEntity(3123123,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
-    _EntityController.createImmortalEntity(3123123,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
+    _EntityController.createImmortalEntity(111,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
+    _EntityController.createImmortalEntity(222,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
 
     // gameState.activeEntityTile.push(gameState.tileMap[3][3]);
     

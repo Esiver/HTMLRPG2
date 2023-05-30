@@ -9,6 +9,7 @@ GAME.EntityController = function (settings,gameState){
             this.name = name;
             this.color;
             this.isPlayer = entitySettings != void 0 ? entitySettings.isPlayer : false;
+            this.isSelected;
             // if (entitySettings && entitySettings.isPlayer != void 0){
             //     this.isPlayer = entitySettings.isPlayer
             // } else {
@@ -73,6 +74,9 @@ GAME.EntityController = function (settings,gameState){
         }
         select(){
             console.log("selecting entity:", this)
+            gameState.currentSelectEntity.push(this)
+            console.log("gamestate:", gameState)
+            gameState.handleSelectEntity("fister")
         }
     }
 
@@ -124,7 +128,7 @@ GAME.EntityController = function (settings,gameState){
         let xPos = settings.xPos;
         let yPos = settings.yPos;
         let entitySettingsObject = {
-            name : "Zu Zhu",
+            name : "Zu Zhu - "+ id,
             wealth: 1,
             age: 1,
             displayColor: "hotpink",

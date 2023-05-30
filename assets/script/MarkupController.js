@@ -3,46 +3,42 @@ GAME.MarkupController = function (settings, gameState) {
     const userHoverEntityContainerSelector = "#hover-container";
     const userSelectEntityContainerSelector = "#hover-container";
 
-    const domClass = {button:'button', buttonText:'button__text'}
+    const domClass = {
+        button:'button', 
+        buttonText:'button__text',
+        entityStatList : 'entity__stat-list',
+        entityStatItem: 'entity__stat-item',
+        tileSelectItem: 'select__list-item',
+        tileSelectItemActive: 'active',
+        
+    }
     const domSelect = {
-        userHoverEntityContainerSelector:"#hover-container",
-        userSelectEntityContainerSelector: "#hover-container"
+        userEntitySelectContainerSelector:"#entity-select-list",
+        userTileSelectContainerSelector: "#tile-select-list"
     }
 
     function placeMarkup(markup,destination){
 
     }
+
     function clearContainer(containerSelector){
         let container = document.querySelector(containerSelector)
-        let containerNodes = container.childNodes;
-        if(containerNodes.length > 0 && containerNodes != null){
+        let containerNodes = container != null ? container.childNodes : null;
+        if(containerNodes != null && containerNodes.length > 0){
             let nodeArray = Array.from(containerNodes);
             nodeArray.forEach(node=>node.remove());
         }
     }
-    function clearSelect(){
-        // let selectContainer = document.querySelector(userHoverEntityContainerSelector);
-        // let selectNodes = selectContainer.childNodes;
-
-        // if (selectNodes.length > 0 && selectNodes != null) {
-        //     let nodeArray = Array.from(selectNodes);
-        //     nodeArray.forEach(node=>node.remove());
-        // }
-        clearContainer(domSelect.userSelectEntityContainerSelector);
+    function clearSelectTile(){
+        clearContainer(domSelect.userTileSelectContainerSelector);
     }
-    function clearHover(){
-        // let hoverContainer = document.querySelector(domSelect.hoverContainer);
-        // let hoverNodes = hoverContainer.childNodes;
-
-        // if (hoverNodes.length > 0 && hoverNodes != null) {
-        //     let nodeArray = Array.from(selectNodes);
-        //     nodeArray.forEach(node=>node.remove());
-        // } 
+    function clearSelectEntity(){
+        clearContainer(domSelect.userEntitySelectContainerSelector)
     }
 
     function renderTileInhibits(entityList) {
         entityList.forEach(entity => {
-            renderEntityMarker(entity);
+            renderTileSelect(entity);
         });
     }
 
@@ -58,38 +54,53 @@ GAME.MarkupController = function (settings, gameState) {
 
         return buttonDOM
     }
-    function renderEntityMarker(entity){
+    function renderTileSelect(entity){
         let inhibitsListItemDOM = document.createElement('li');
         let nameField = document.createElement('h4');
         let buttonClickCallback = function selectEntityBtnClick(){
-            renderEntitySelect(entity);
+            clearContainer(domSelect.userEntitySelectContainerSelector)
             entity.select();
+            renderEntitySelect(entity);
+            inhibitsListItemDOM.classList.add(domClass.tileSelectItemActive)
         }
-        let selectEntityButton = getButton({buttonText: 'select', buttonClickCallback: buttonClickCallback})//document.createElement('button')
+        let selectEntityButton = getButton({buttonText: 'select', buttonClickCallback: buttonClickCallback});
         
         nameField.innerText = entity.name;
+
+        inhibitsListItemDOM.classList.add(domClass.tileSelectItem)
 
         inhibitsListItemDOM.append(nameField);
         inhibitsListItemDOM.append(selectEntityButton);
 
-        document.querySelector(userHoverEntityContainerSelector).append(inhibitsListItemDOM);
+        document.querySelector(domSelect.userTileSelectContainerSelector).append(inhibitsListItemDOM);
     }
+    
+
     function renderEntitySelect(entity){
         let entitySelectDOM = document.createElement('li');
         let entityNameDOM = document.createElement('h3');
+        let entityStatListDOM = document.createElement('ul');
+        let entityWealthDOM = document.createElement('li');
 
-        entityNameDOM.innerHTML = entity.name
+        
+        entityNameDOM.innerHTML = entity.name;
+        entityWealthDOM.innerHTML = 'Wealth: '+entity.wealth;
 
+        
         entitySelectDOM.append(entityNameDOM);
-        console.log(document.querySelector(domSelect.userSelectEntityContainerSelector))
-        document.querySelector(domSelect.userSelectEntityContainerSelector).append(entitySelectDOM);
+        entitySelectDOM.append(entityStatListDOM)
+        entityStatListDOM.append(entityWealthDOM);
+
+
+        document.querySelector(domSelect.userEntitySelectContainerSelector).append(entitySelectDOM);
+
         return 0;
     }
 
-    this.clearHover = clearHover;
-    this.clearSelect = clearSelect;
+    this.clearSelectEntity = clearSelectEntity;
+    this.clearSelectTile = clearSelectTile;
     this.renderTileInhibits = renderTileInhibits;
-    this.renderEntityMarker = renderEntityMarker;
+    this.renderEntityMarker = renderTileSelect;
     this.renderEntitySelect = renderEntitySelect;
 
     return this;

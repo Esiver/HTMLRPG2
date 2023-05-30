@@ -25,13 +25,11 @@
     <canvas id="map" style="border: 1px solid;">
 
     </canvas>
-    <div class="container" id="hover-container">
-        
+    <div class="select__wrapper">
+        <ul class="select__list" id="tile-select-list"></ul>
+        <ul class="select__list" id="entity-select-list"></ul>
     </div>
-
-    <div class="container" id="select-container">
-        
-    </div>
+    
 </body>
 
 <script>
@@ -40,15 +38,15 @@
     let worldSettings = {
         canvas: {
             selector: "#map",
-            height: 600,
-            width: 600
+            height: 300,
+            width: 300
         },
         selectDom: {
             container : "#select-container",
             name: "#select-name"
         },
-        xTiles: 20,
-        yTiles: 20,
+        xTiles: 10,
+        yTiles: 10,
         environment: {
             tundraNorth: 0.1,
             tundraSouth: 0.9,
