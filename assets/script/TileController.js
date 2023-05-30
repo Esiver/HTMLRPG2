@@ -1,6 +1,8 @@
 GAME.TileController = function (settings, gameState) {
 
     const worldSettings = settings;
+    let _MarkupController = GAME.MarkupController(settings);
+
 
     class Point {
         constructor(x, y, ctx) {
@@ -95,15 +97,17 @@ GAME.TileController = function (settings, gameState) {
             return html
         }
         renderTileInhibitsDOM(){
-
-            let inhibitsListDOM = document.createElement('ul')
-
-            this.inhibits.forEach(inhibitingEntity => {
-                let inhibitsListItemDOM = renderEntityMarker(inhibitingEntity);
-                inhibitsListDOM.append(inhibitsListItemDOM)
-            });
+            _MarkupController.renderTileInhibits(this.inhibits)
+            // this.inhibits.forEach(inhibitingEntity => {
+            //     // let inhibitsListItemDOM = renderEntityMarker(inhibitingEntity);
+            //     // inhibitsListDOM.append(inhibitsListItemDOM)
+            //     _MarkupController.renderEntityMarker(inhibitingEntity);
+                
+            // });
             
-            document.querySelector(this.settings.selectDom.name).append(inhibitsListDOM)
+            // document.querySelector(this.settings.selectDom.name).append(inhibitsListDOM)
+
+
             // if (entity.constructor.name == 'Construction'){
             //     document.querySelector(this.settings.selectDom.name).innerHTML = this.getConstructDisplayMarkupString(entity)
             // }

@@ -1,0 +1,10 @@
+.button {
+    padding:8px 12px;
+    background-color: blueviolet;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+}
+.button__text {
+
+}

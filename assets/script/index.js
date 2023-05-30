@@ -29,6 +29,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         tickCount:0,
     };
 
+
     let _TileController = GAME.TileController(worldSettings, gameState);
     let _PlayerController = GAME.PlayerController();
     let _InputController = GAME.InputController(worldSettings, 
@@ -44,6 +45,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             onEscape: clearSelect
         });
     let _EntityController = GAME.EntityController(worldSettings, gameState);
+    let _MarkupController = GAME.MarkupController(worldSettings, gameState);
     let _TimeController = GAME.TimeController();
 
 
@@ -104,16 +106,13 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     }
     function clearSelect(){
         gameState.currentSelectTile = [];
-        document.querySelector(worldSettings.selectDom.name).innerText = ""
+        _MarkupController.clearSelect()
+        // document.querySelector(worldSettings.selectDom.name).innerText = ""
     }
     function handleSelectTile(tile) {
         clearSelect();
         tile.select(gameState);
         
-        // let tileEntityList = _TileController.getAllTileEntities(tile)
-        // console.log("tileEntityList",tileEntityList)
-        // _TileController.
-        // handleSelectEntity(tileEntityList);
     }
     function handleSelectEntity(entityList){
         console.log(entityList)
