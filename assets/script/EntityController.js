@@ -73,10 +73,10 @@ GAME.EntityController = function (settings,gameState){
 
         }
         select(){
-            console.log("selecting entity:", this)
-            gameState.currentSelectEntity.push(this)
-            console.log("gamestate:", gameState)
-            gameState.handleSelectEntity("fister")
+            // this is now our selected 
+            if (!gameState.currentSelectEntity.some(entity => entity === this)){ // only if not already selected
+                gameState.currentSelectEntity.push(this)
+            }
         }
     }
 
@@ -124,6 +124,7 @@ GAME.EntityController = function (settings,gameState){
     function createUnitEntity(settings){
 
     };
+    
     function createImmortalEntity (id, settings, stats, worldSettings, gameState){
         let xPos = settings.xPos;
         let yPos = settings.yPos;

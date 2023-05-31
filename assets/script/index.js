@@ -29,9 +29,18 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         tickCount:0,
 
 
-        handleSelectEntity: function (entityList){
-            consoleLog(entityList)
+        clearSelectEntityList: function clearSelectEntity(target=null){
+            if (target == null) {
+                this.currentSelectEntity = [];
+            } else {
+                
+                let indexToRemove = this.currentSelectEntity.indexOf(target)
+                console.log(indexToRemove)
+                this.currentSelectEntity.splice(indexToRemove, 1);
+                console.log("remvoe specific from arrray ", this.currentSelectEntity)
+            }
         }
+
     };
 
 
@@ -83,7 +92,6 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         }
         for (let x = 0; x < settings.xTiles; x++) {
             for (let y = 0; y < settings.yTiles; y++) {
-                
                 gameState.tileMap[x][y] = _TileController.initTile(x, y, settings, worldSettings.ctx)
             }
         }
@@ -111,8 +119,8 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     }
     function clearSelect(){
         gameState.currentSelectTile = [];
-        _MarkupController.clearSelectTile()
-        _MarkupController.clearSelectEntity()
+        _MarkupController.clearSelectTileDOM()
+        // _MarkupController.clearSelectEntityDOM()
         // document.querySelector(worldSettings.selectDom.name).innerText = ""
     }
     function handleSelectTile(tile) {
@@ -135,6 +143,9 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             let targetTile = gameState.tileMap[newX][tileY]
             handleSelectTile(targetTile)
         })
+        if (gameState.currentSelectEntity.length > 0) {
+            moveEntityLeft();
+        }
     }
     function moveCursorRight(){
         gameState.currentSelectTile.forEach(oldTile => {
@@ -144,6 +155,9 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             let targetTile = gameState.tileMap[newX][tileY]
             handleSelectTile(targetTile)
         })
+        if (gameState.currentSelectEntity.length > 0) {
+            moveEntityRight();
+        }
     }
     function moveCursorUp(){
         gameState.currentSelectTile.forEach(oldTile => {
@@ -186,18 +200,20 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         });
 
         // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
-        moveSelectX(-1, gameState.currentSelectTile);
+        // moveSelectX(-1, gameState.currentSelectTile);
 
     }
     function moveEntityRight(){
         let relevantTiles = gameState.currentSelectTile;
-        let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        // let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        let entitiesToMove = gameState.currentSelectEntity
+
         entitiesToMove.forEach(entity =>{
             entity.moveEntityX(1, gameState)
         });
 
         // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
-        moveSelectX(1, gameState.currentSelectTile);
+        // moveSelectX(1, gameState.currentSelectTile);
     }
     function moveEntityUp(){
         let relevantTiles = gameState.currentSelectTile;
@@ -207,7 +223,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         });
 
         // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
-        moveSelectY(-1, gameState.currentSelectTile);
+        // moveSelectY(-1, gameState.currentSelectTile);
     }
     function moveEntityDown(){
         let relevantTiles = gameState.currentSelectTile;
