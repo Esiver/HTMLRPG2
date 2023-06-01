@@ -33,11 +33,8 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             if (target == null) {
                 this.currentSelectEntity = [];
             } else {
-                
                 let indexToRemove = this.currentSelectEntity.indexOf(target)
-                console.log(indexToRemove)
                 this.currentSelectEntity.splice(indexToRemove, 1);
-                console.log("remvoe specific from arrray ", this.currentSelectEntity)
             }
         }
 
@@ -167,6 +164,9 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             let targetTile = gameState.tileMap[tileX][newY]
             handleSelectTile(targetTile)
         })
+        if (gameState.currentSelectEntity.length > 0) {
+            moveEntityUp();
+        }
     }
     function moveCursorDown(){
         gameState.currentSelectTile.forEach(oldTile => {
@@ -176,6 +176,9 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             let targetTile = gameState.tileMap[tileX][newY];
             handleSelectTile(targetTile);
         })
+        if (gameState.currentSelectEntity.length > 0) {
+            moveEntityDown();
+        }
     }
     function moveSelectX(dir, selectTileList) {
         selectTileList.forEach(oldTile => {
@@ -186,6 +189,9 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             
             handleSelectTile(targetTile)
         })
+        if (gameState.currentSelectEntity.length > 0) {
+            moveEntityUp();
+        }
     }
 
 
@@ -217,8 +223,11 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     }
     function moveEntityUp(){
         let relevantTiles = gameState.currentSelectTile;
-        let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        // let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        let entitiesToMove = gameState.currentSelectEntity
+
         entitiesToMove.forEach(entity =>{
+            
             entity.moveEntityY(-1, gameState)
         });
 
@@ -227,7 +236,9 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     }
     function moveEntityDown(){
         let relevantTiles = gameState.currentSelectTile;
-        let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        // let entitiesToMove = _TileController.getAllTileEntities(relevantTiles);
+        let entitiesToMove = gameState.currentSelectEntity
+
         entitiesToMove.forEach(entity =>{
             console.log("move ENTITY down")
 
@@ -281,13 +292,13 @@ GAME.GameScreen = function (jsonData, worldSettings) {
 
         gameState.currentHoverTile.forEach(tile => {
             if(typeof tile != 'undefined'){
-                tile.draw(worldSettings, "green");
+                tile.draw(worldSettings, "#b4bcbf");
             }
             
         });
 
         gameState.currentSelectTile.forEach(tile => {
-            tile.draw(worldSettings, "blue");
+            tile.draw(worldSettings, "#852a15");
             
         })
         

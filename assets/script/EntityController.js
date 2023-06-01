@@ -132,7 +132,7 @@ GAME.EntityController = function (settings,gameState){
             name : "Zu Zhu - "+ id,
             wealth: 1,
             age: 1,
-            displayColor: "hotpink",
+            displayColor: "#b4bd6a",
             isPlayer: true,
         };
         let newImmortalEntityObject = new Immortal(id, gameState.tileMap[xPos][yPos],entitySettingsObject)
