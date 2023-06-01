@@ -23,8 +23,10 @@ GAME.TileController = function (settings, gameState) {
 
         draw(worldSettings, color) {
             
-            worldSettings.ctx.fillStyle ="black"; // fallback
-            worldSettings.ctx.fillStyle = color
+            worldSettings.ctx.fillStyle = worldSettings.colors.tileFallback; // fallback
+            if (typeof color != 'undefined'){
+                worldSettings.ctx.fillStyle = color
+            }
 
             worldSettings.ctx.fillRect(
                 this.x * worldSettings.tileWidth, 
@@ -98,49 +100,11 @@ GAME.TileController = function (settings, gameState) {
         }
         renderTileInhibitsDOM(){
             _MarkupController.renderTileInhibits(this.inhibits)
-            // this.inhibits.forEach(inhibitingEntity => {
-            //     // let inhibitsListItemDOM = renderEntityMarker(inhibitingEntity);
-            //     // inhibitsListDOM.append(inhibitsListItemDOM)
-            //     _MarkupController.renderEntityMarker(inhibitingEntity);
-                
-            // });
-            
-            // document.querySelector(this.settings.selectDom.name).append(inhibitsListDOM)
 
-
-            // if (entity.constructor.name == 'Construction'){
-            //     document.querySelector(this.settings.selectDom.name).innerHTML = this.getConstructDisplayMarkupString(entity)
-            // }
-            // if(entity.constructor.name == 'Immortal'){
-            //     document.querySelector(this.settings.selectDom.name).innerHTML = this.getImmortalDisplayMarkupString(entity)
-
-            // }
         }
 
     }
-    // function renderEntityMarker(entity){
-    //     let inhibitsListItemDOM = document.createElement('li');
-    //     let nameField = document.createElement('h4');
-    //     let selectEntityBtn = document.createElement('button')
-
-    //     nameField.innerText = entity.name;
-    //     selectEntityBtn.innerText = 'select'
-        
-    //     selectEntityBtn.addEventListener('click', function selectEntityBtnClick(){
-    //         entity.select()
-    //         renderEntitySelect(entity);
-    //         console.log(gameState)
-    //     })
-
-    //     inhibitsListItemDOM.append(nameField);
-    //     inhibitsListItemDOM.append(selectEntityBtn);
-
-    //     return inhibitsListItemDOM
-    // }
-    // function renderEntitySelect(){
-        
-    //     return 0;
-    // }
+    
     
     class Cursor extends Point {
         constructor(x, y, ctx) {
@@ -160,7 +124,6 @@ GAME.TileController = function (settings, gameState) {
     }
 
     function initTile(x, y, settings, ctx) {
-        
         return new Tile(x, y, ctx, "blue", "red", settings)
     }
 

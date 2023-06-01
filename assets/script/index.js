@@ -74,7 +74,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         canvas.onmousemove = handleMouseMove;
 
         // start timer
-        // timeTicker()
+        timeTicker();
     }
 
     function consoleLog(msg){
@@ -121,8 +121,12 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         // document.querySelector(worldSettings.selectDom.name).innerText = ""
     }
     function handleSelectTile(tile) {
-        clearSelect();
-        tile.select(gameState);
+        console.log("handle select tile:", tile)
+        if(typeof tile != 'undefined'){
+            clearSelect();
+            tile.select(gameState);
+        }
+        
     }
     function handleSelectEntity(entityList){
         console.log(entityList)
@@ -180,6 +184,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             moveEntityDown();
         }
     }
+
     function moveSelectX(dir, selectTileList) {
         selectTileList.forEach(oldTile => {
             let tileY = oldTile.y
@@ -281,24 +286,23 @@ GAME.GameScreen = function (jsonData, worldSettings) {
 
         
         gameState.activeEntityTile.forEach(tile => {
-            let drawColor = "red";
-            if(tile.inhibits.length > 0){
-                // console.log(tile.inhibits)
+            let drawColor = worldSettings.colors.tileFallback;
+            if(tile.inhibits.length > 0){    
                 drawColor = tile.inhibits[0].displayColor
             }
-            // console.log(tile)
+            
             tile.draw(worldSettings, drawColor);
         })
 
         gameState.currentHoverTile.forEach(tile => {
             if(typeof tile != 'undefined'){
-                tile.draw(worldSettings, "#b4bcbf");
+                tile.draw(worldSettings, worldSettings.colors.mouseHover);
             }
             
         });
 
         gameState.currentSelectTile.forEach(tile => {
-            tile.draw(worldSettings, "#852a15");
+            tile.draw(worldSettings, worldSettings.colors.selectTile);
             
         })
         
@@ -311,9 +315,27 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         
 
     }
+    function gameTurn(){
+        let entitiesToHandle = [];
+        let tilesToHandle = gameState.activeEntityTile;
+
+        tilesToHandle.forEach(tile=>{
+            tile.inhibits.forEach(inhibitingEntity=>{
+                entitiesToHandle.push(inhibitingEntity);
+            })
+        })
+        
+        
+        entitiesToHandle.forEach(activeEntity =>{
+            // console.log("hadnle!", activeEntity)
+            activeEntity.handleTurn();
+        });
+    }
+
     function timeTicker(){
+        gameTurn()
+
         setTimeout(function(){
-            console.log("tick")
             gameState.tickCount ++;
             timeTicker()
         }, 460)

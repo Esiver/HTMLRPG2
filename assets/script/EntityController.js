@@ -35,18 +35,14 @@ GAME.EntityController = function (settings,gameState){
             let targetCoordinateX = currentCoordinateX + dir;
             let targetTile = gameState.tileMap[targetCoordinateX][currentCoordinateY]
 
-
-            // remove self from current tile
-            console.log(currentTile,`move from ${currentCoordinateX} to ${targetCoordinateX}`)
             this.tile = targetTile;
 
             currentTile.removeEntity(entitySelf, gameState);
             targetTile.addEntity(entitySelf, gameState);
             currentTile.update()
             targetTile.update();
-
-
         }
+
         moveEntityY(dir, gameState){
             let entitySelf = this;
             let currentTile = this.tile;
@@ -56,15 +52,15 @@ GAME.EntityController = function (settings,gameState){
             let targetCoordinateY = currentCoordinateY + dir;
             let targetTile = gameState.tileMap[currentCoordinateX][targetCoordinateY]
 
-            console.log("moveEntityY to targetTile", targetTile)
+            if (typeof targetTile != 'undefined'){
+                this.tile = targetTile;
 
-            // remove self from current tile
-            // console.log(currentTile,`move from ${currentCoordinateX} to ${targetCoordinateX}`)
-            this.tile = targetTile;
-            currentTile.removeEntity(entitySelf, gameState);
-            targetTile.addEntity(entitySelf, gameState);
-            currentTile.update()
-            targetTile.update();
+                currentTile.removeEntity(entitySelf, gameState);
+                targetTile.addEntity(entitySelf, gameState);
+                currentTile.update()
+                targetTile.update();
+            }
+
         }
 
         moveEntity(toTile, gameState){
@@ -77,6 +73,9 @@ GAME.EntityController = function (settings,gameState){
             if (!gameState.currentSelectEntity.some(entity => entity === this)){ // only if not already selected
                 gameState.currentSelectEntity.push(this)
             }
+        }
+        handleTurn(){
+            console.log(this)
         }
     }
 
@@ -132,7 +131,7 @@ GAME.EntityController = function (settings,gameState){
             name : "Zu Zhu - "+ id,
             wealth: 1,
             age: 1,
-            displayColor: "#b4bd6a",
+            displayColor: worldSettings.colors.unitEntity,
             isPlayer: true,
         };
         let newImmortalEntityObject = new Immortal(id, gameState.tileMap[xPos][yPos],entitySettingsObject)
