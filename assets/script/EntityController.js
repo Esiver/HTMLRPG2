@@ -10,6 +10,7 @@ GAME.EntityController = function (settings,gameState){
             this.color;
             this.isPlayer = entitySettings != void 0 ? entitySettings.isPlayer : false;
             this.isSelected;
+            
             // if (entitySettings && entitySettings.isPlayer != void 0){
             //     this.isPlayer = entitySettings.isPlayer
             // } else {
@@ -75,10 +76,13 @@ GAME.EntityController = function (settings,gameState){
             }
         }
         handleTurn(){
-            console.log(this)
+            
         }
     }
-
+    class Action {
+        // constructor(entity, )
+        // TODO : CONTINUE HERE actions for gameturn
+    }
     class Unit extends Entity {
 
     }
