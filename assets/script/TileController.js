@@ -21,7 +21,7 @@ GAME.TileController = function (settings, gameState) {
             this.settings = settings;
         }
 
-        draw(worldSettings, color) {
+        draw(worldSettings, color, thumbnail= null) {
             
             worldSettings.ctx.fillStyle = worldSettings.colors.tileFallback; // fallback
             if (typeof color != 'undefined'){
@@ -34,9 +34,20 @@ GAME.TileController = function (settings, gameState) {
                 worldSettings.tileWidth, 
                 worldSettings.tileHeight
             );
+            if (thumbnail != null) {
+                this.drawImg(worldSettings, thumbnail)
+            }
         }
         drawImg(worldSettings, imgPath){
-            
+            let thumbImage = new Image();
+            thumbImage.src = imgPath;
+            worldSettings.ctx.drawImage(
+                thumbImage,
+                this.x * worldSettings.tileWidth, 
+                this.y * worldSettings.tileHeight, 
+                worldSettings.tileWidth, 
+                worldSettings.tileHeight
+            )
         }
         update(gameState){
             // update the tile, remove it from actileTileList if empty!

@@ -1,0 +1,11 @@
+{
+    "questlist" : [
+        {
+            "name": "quest name 1",
+            "description" : "quest 1 description",
+            "start" : {"type": "entity", "target": 123, "init": "auto"},
+            "objective" : {"type": "tile", "target": [7,7]}
+            
+        }
+    ]
+}

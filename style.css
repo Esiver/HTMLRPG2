@@ -1,7 +1,12 @@
 .game-screen__row {
     display: flex;
 }
-
+.game-screen__aside {
+    padding: 0;
+    margin: 0;
+    flex: 1;
+    
+}
 
 .button {
     padding:8px 12px;
@@ -15,7 +20,16 @@
 }
 
 
-
+.time-bar__list {
+    display:flex;
+    flex-direction: row;
+    list-style-type: none;
+    background-color: rgb(100, 149, 237);
+    color: white;
+    padding: 0;
+    margin: 0;
+    height: 2rem;
+}
 
 
 
@@ -30,7 +44,7 @@
     padding: 0;
     margin: 0;
     flex: 1;
-    border: 1px solid hotpink;
+    background-color: rgba(100, 149, 237, 0.25);
 }
 
 .select__list-item {
@@ -39,6 +53,11 @@
     justify-content: space-between;
     padding: 5px 10px;
     transition: all 400ms ease-in-out;
+}
+
+.select__list-item img{
+    width: 75px;
+    height: 75px;
 }
 
 .select__list-item.active {background:red;}

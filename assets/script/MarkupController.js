@@ -6,15 +6,23 @@ GAME.MarkupController = function (settings, gameState) {
     const domClass = {
         button:'button', 
         buttonText:'button__text',
+
         entityStatList : 'entity__stat-list',
         entityStatItem: 'entity__stat-item',
+
         tileSelectItem: 'select__list-item',
         tileSelectItemActive: 'active',
+
+
         
     }
     const domSelect = {
         userEntitySelectContainerSelector:"#entity-select-list",
-        userTileSelectContainerSelector: "#tile-select-list"
+        userTileSelectContainerSelector: "#tile-select-list",
+        timebarYear: "#time-year",
+        timebarSeason: "#time-season",
+        timebarDay: "#time-day"
+
     }
     function placeMarkup(markup,destination){
 
@@ -113,6 +121,8 @@ GAME.MarkupController = function (settings, gameState) {
         let buttonClickCallback = handleSelectEntityClearButton;
         let entityUnselectButtonDOM = getButton({buttonText:'Clear', buttonClickCallback:buttonClickCallback})
         
+        entitySelectDOM.classList.add(domClass.tileSelectItem)
+
         entityPortraitDOM.setAttribute('src', entity.getEntityPortrait())
         entityNameDOM.innerHTML = entity.name;
         entityWealthDOM.innerHTML = 'Wealth: '+entity.wealth;
@@ -129,7 +139,16 @@ GAME.MarkupController = function (settings, gameState) {
         return 0;
     }
 
+    function renderTimeBar(){
+        let timebarYear = document.querySelector(domSelect.timebarYear);
+        let timebarSeason = document.querySelector(domSelect.timebarSeason);
+        
+        timebarYear.innerHTML = 'year '+gameState.timeObject.year;
+        console.log(gameState.timeObject)
+        timebarSeason.innerHTML = ' - '+gameState.timeObject.seasonName;
+    }
 
+    this.renderTimeBar = renderTimeBar;
     this.clearSelectEntityDOM = clearSelectEntityDOM;
     this.clearSelectTileDOM = clearSelectTileDOM;
     this.renderTileInhibits = renderTileInhibits;

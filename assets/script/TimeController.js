@@ -7,8 +7,8 @@ GAME.TimeController = function (worldSettings, gameState, callbacks) {
 
     function init() {
         recordTimePoint(0 , "start Time");
-        
-
+        callbacks.onSeasonChange();
+        callbacks.onYearChange();
     }
 
     function startTime(){
@@ -42,15 +42,16 @@ GAME.TimeController = function (worldSettings, gameState, callbacks) {
     function handleTimeTick(){
         gameState.timeTicker ++;
         gameState.timeObject.day ++;
+
         let dayObj = gameState.timeObject.day;
         let daysInYear = worldSettings.daysInYear
         let quarterDur = daysInYear / 4
 
         if(dayObj > daysInYear) {
-            gameState.timeObject.day = 0
-            gameState.timeObject.quarter = 0
+            gameState.timeObject.day = 0;
+            gameState.timeObject.quarter = 0;
             gameState.timeObject.year ++;
-            callbacks.onYearChange()
+            callbacks.onYearChange();
         }
 
         if(dayObj < quarterDur) {
@@ -74,6 +75,8 @@ GAME.TimeController = function (worldSettings, gameState, callbacks) {
                 callbacks.onSeasonChange();
             }
         }
+
+        gameState.timeObject.seasonName = getSeason(gameState.timeObject.quarter);
     }
 
     function recordTimePoint(refId, description) {

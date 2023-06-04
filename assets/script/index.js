@@ -1,7 +1,5 @@
 
 GAME.GameScreen = function (jsonData, worldSettings) {
-
-
     const canvas = document.querySelector(worldSettings.canvas.selector);
     const ctx = canvas.getContext('2d');
     worldSettings.ctx = ctx;
@@ -10,8 +8,8 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     canvas.width = worldSettings.canvas.width;
     let tileHeight = worldSettings.canvas.height / worldSettings.xTiles;
     let tileWidth = worldSettings.canvas.width / worldSettings.yTiles
-    worldSettings.tileHeight = tileHeight
-    worldSettings.tileWidth = tileWidth
+    worldSettings.tileHeight = tileHeight;
+    worldSettings.tileWidth = tileWidth;
 
     let gameState = {
         multiSelectMode : false,
@@ -28,10 +26,12 @@ GAME.GameScreen = function (jsonData, worldSettings) {
 
         timeObject : {
             hour:0,
-            day:0,
-            week:0,
-            month:0,
-            year:0
+            day:1,
+            week:1,
+            month:1,
+            year:1053,
+            quarter: 1,
+            seasonName: 'Spring'
         },
         tickCount:0,
 
@@ -51,7 +51,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         }
 
     };
-
+    
 
     let _TileController = GAME.TileController(worldSettings, gameState);
     let _PlayerController = GAME.PlayerController();
@@ -64,6 +64,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             onEscape: clearSelect
         });
     let _EntityController = GAME.EntityController(worldSettings, gameState);
+    let _QuestController = GAME.QuestController(worldSettings, gameState)
     let _MarkupController = GAME.MarkupController(worldSettings, gameState);
     let _TaskController = GAME.TaskController(worldSettings, gameState)
     let _TimeController = GAME.TimeController(worldSettings, gameState, 
@@ -80,7 +81,9 @@ GAME.GameScreen = function (jsonData, worldSettings) {
 
     function createWorld(settings) {
         //setup world
-        createTiles(settings)
+        createTiles(settings);
+        createEntities();
+        createQuests();
 
         // setup eventlisteners
         canvas.onclick = handleMouseClick;
@@ -106,12 +109,19 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             }
         }
     }
+    function createEntities(){
+        _EntityController.createEntities();
+    }
+
+    function createQuests(){
+        _QuestController.createQuests();
+    }
 
     function handleSeasonChange(){
-        console.log('game handle season change')
+        _MarkupController.renderTimeBar();
     }
     function handleYearChange(){
-
+        _MarkupController.renderTimeBar()
     }
     function getTileFromCursor(cursor) {
         let roundedX = Math.floor(cursor.x / tileWidth);
@@ -144,7 +154,6 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         gameState.currentSelectTile = [];
         _MarkupController.clearSelectTileDOM()
         // _MarkupController.clearSelectEntityDOM()
-        // document.querySelector(worldSettings.selectDom.name).innerText = ""
     }
     function handleSelectTile(tile) {
         console.log("handle select tile:", tile)
@@ -163,7 +172,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         let tileFirstEntity = _TileController.getFirstTileEntity(tile);
         if(isDefined(tileFirstEntity)){
             tileFirstEntity.select()
-            
+
         }
     }
 
@@ -323,17 +332,18 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         
         gameState.activeEntityTile.forEach(tile => {
             let drawColor = worldSettings.colors.tileFallback;
+            let drawThumbnail = null;
             if(tile.inhibits.length > 0){    
                 drawColor = tile.inhibits[0].displayColor
+                drawThumbnail = tile.inhibits[0].thumbnail
             }
-            tile.draw(worldSettings, drawColor);
+            tile.draw(worldSettings, drawColor, drawThumbnail);
         })
 
         gameState.currentHoverTile.forEach(tile => {
             if(isDefined(tile)){
                 tile.draw(worldSettings, worldSettings.colors.mouseHover);
             }
-            
         });
 
         gameState.currentSelectTile.forEach(tile => {

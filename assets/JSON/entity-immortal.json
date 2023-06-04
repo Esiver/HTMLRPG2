@@ -1,0 +1,19 @@
+{
+    
+    "entitylist": [
+        {
+            "id": 1,
+            "name": "test",
+            "type": "immortal",
+            "questlist": [
+                123,
+                124
+            ],
+            "itemlist": [
+
+            ],
+            "hometile": [6,6]
+            
+        }
+    ]
+}

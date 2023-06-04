@@ -1,0 +1,20 @@
+{
+    "immortal": {
+        "greet": [
+            "greet test 1",
+            "greet test 2"
+
+        ],
+        "exit" : [
+            "exit test 1",
+            "exit test 2"
+        ]
+        
+    },
+    "peasant": {
+        "greet": [
+            "peasant greet test 1"
+        ]
+    }
+
+}

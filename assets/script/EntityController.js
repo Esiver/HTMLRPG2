@@ -8,8 +8,8 @@ GAME.EntityController = function (settings,gameState){
             this.id = id;
             this.tile = tile;
             this.name = name;
-            this.portrait = '/assets/img/aleph.png';
-            this.thumbnail = '/assets/img/aleph.png';
+            this.portrait = '/assets/img/emilmonster.png';
+            this.thumbnail = '/assets/img/emilmonster.png';
             this.color;
             this.isPlayer = entitySettings != void 0 ? entitySettings.isPlayer : false;
             this.taskList = [];
@@ -22,7 +22,7 @@ GAME.EntityController = function (settings,gameState){
             // }
 
         };
-
+        
         update() {
 
             // console.log(this)
@@ -226,7 +226,11 @@ GAME.EntityController = function (settings,gameState){
     function moveEntity(Entity, toTile){
 
     }
-
+    function createEntities(entityJSON){
+        let entityList = [];
+        console.log("createEntities", entityList)
+        return entityList;
+    }
     function createUnitEntity(settings){
 
     };
@@ -279,6 +283,7 @@ GAME.EntityController = function (settings,gameState){
         return newTownEntityObject;
     }
 
+    this.createEntities = createEntities;
     this.createTownEntity = createTownEntity;
     this.createImmortalEntity = createImmortalEntity;
     this.createUnitEntity = createUnitEntity;
