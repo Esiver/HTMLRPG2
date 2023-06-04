@@ -1,3 +1,8 @@
+.game-screen__row {
+    display: flex;
+}
+
+
 .button {
     padding:8px 12px;
     background-color: blueviolet;

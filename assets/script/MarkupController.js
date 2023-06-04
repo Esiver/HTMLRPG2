@@ -61,9 +61,7 @@ GAME.MarkupController = function (settings, gameState) {
             // tilføj til valgte
             // rendér liste af valgte 
             entity.select();
-            updateEntitySelectListDOM();
-            // inhibitsListItemDOM.classList.add(domClass.tileSelectItemActive)
-            
+            // updateEntitySelectListDOM();
             console.log("now selected entities: ", gameState.currentSelectEntity)
         }
 
@@ -92,20 +90,38 @@ GAME.MarkupController = function (settings, gameState) {
         clearSelectEntityDOM();
         updateEntitySelectListDOM();
     }
+    function getTaskListDOM(entity){
+        let taskListDOM = document.createElement('ul');
+
+        if(typeof entity.taskList != 'undefined' || entity.taskList.length == 0){
+            entity.taskList.forEach(task => {
+                let taskItemDOM = document.createElement('li');
+                taskListDOM.innerHTML = task.constructor.name;
+                taskListDOM.append(taskItemDOM);
+            })
+        }
+        
+        return taskListDOM
+    }
     function renderEntitySelect(entity){
         let entitySelectDOM = document.createElement('li');
+        let entityPortraitDOM = document.createElement('img');
         let entityNameDOM = document.createElement('h3');
         let entityStatListDOM = document.createElement('ul');
         let entityWealthDOM = document.createElement('li');
+        let entityTaskListDOM = getTaskListDOM(entity);
         let buttonClickCallback = handleSelectEntityClearButton;
         let entityUnselectButtonDOM = getButton({buttonText:'Clear', buttonClickCallback:buttonClickCallback})
         
+        entityPortraitDOM.setAttribute('src', entity.getEntityPortrait())
         entityNameDOM.innerHTML = entity.name;
         entityWealthDOM.innerHTML = 'Wealth: '+entity.wealth;
         
+        entitySelectDOM.append(entityPortraitDOM)
         entitySelectDOM.append(entityNameDOM);
         entitySelectDOM.append(entityStatListDOM)
         entityStatListDOM.append(entityWealthDOM);
+        entitySelectDOM.append(entityTaskListDOM)
         entitySelectDOM.append(entityUnselectButtonDOM)
 
         document.querySelector(domSelect.userEntitySelectContainerSelector).append(entitySelectDOM);
@@ -119,6 +135,7 @@ GAME.MarkupController = function (settings, gameState) {
     this.renderTileInhibits = renderTileInhibits;
     this.renderEntityMarker = renderTileSelect;
     this.renderEntitySelect = renderEntitySelect;
+    this.updateEntitySelectListDOM = updateEntitySelectListDOM;
 
     return this;
 }

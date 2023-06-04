@@ -10,7 +10,7 @@
         const GAME = new Object();
     </script>
     <script type="text/javascript" src="/assets/script/PlayerController.js"></script>
-
+    <script type="text/javascript" src="/assets/script/TaskController.js"></script>
     <script type="text/javascript" src="/assets/script/InputController.js"></script>
     <script type="text/javascript" src="/assets/script/EntityController.js"></script>
     <script type="text/javascript" src="/assets/script/TileController.js"></script>
@@ -22,12 +22,17 @@
 
 </head>
 <body>
-    <canvas id="map" style="border: 1px solid;">
+    <div class="game-screen__row">
+        <canvas id="map" style="border: 1px solid;">
 
-    </canvas>
+        </canvas>
+        <ul class="select__list" id="entity-select-list"></ul>
+        
+
+    </div>
+    
     <div class="select__wrapper">
         <ul class="select__list" id="tile-select-list"></ul>
-        <ul class="select__list" id="entity-select-list"></ul>
     </div>
     
 </body>
@@ -54,8 +59,9 @@
             unitEntity:"#b4bd6a",
             constructionEntity:"darkblue",
         },
-        xTiles: 10,
-        yTiles: 10,
+        xTiles: 30,
+        yTiles: 30,
+        daysInYear: 365,
         environment: {
             tundraNorth: 0.1,
             tundraSouth: 0.9,
@@ -72,7 +78,7 @@
 </html>
 
 <!-- todo -->
-<!-- 1) entity markup -->
-<!-- 2) immortal movement -->
-<!-- 3) tidens gang? -->
-
+<!-- seasons -->
+<!-- Town Idle -->
+<!-- Inventory system -->
+<!-- entity AI: idle => do what? -->

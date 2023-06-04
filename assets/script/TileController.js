@@ -35,6 +35,9 @@ GAME.TileController = function (settings, gameState) {
                 worldSettings.tileHeight
             );
         }
+        drawImg(worldSettings, imgPath){
+            
+        }
         update(gameState){
             // update the tile, remove it from actileTileList if empty!
             this.checkStatus(gameState);
@@ -54,25 +57,16 @@ GAME.TileController = function (settings, gameState) {
         }
         select(gameState){
             console.log(`selecting (${this.inhibits.length}): `, this.inhibits)
-            // this.inhibits.forEach(entity => {
-            //     this.displayTileInhibits(entity)
-            // });
             gameState.currentSelectTile.push(this);
-            // generateCurrentSelectDom(this.inhibits)
             this.renderTileInhibitsDOM()
         }
         
         removeEntity(entity, gameState){
             this.inhibits = this.inhibits.filter(inhibitingEntity => inhibitingEntity != entity);
-            
-            // this.inhibits = [];
-            console.log('removeEntity: ')
         }
         addEntity(entity, gameState){
             this.inhibits.push(entity);
             gameState.activeEntityTile.push(this);
-            console.log('adding entity');
-            // console.log(gameState.activeEntityTile)
         }
         getImmortalDisplayMarkupString(immortalEntity){
             let html = `todo!`
@@ -111,7 +105,9 @@ GAME.TileController = function (settings, gameState) {
             super(x, y);
         }
     }
-
+    function getFirstTileEntity(tile){
+        return tile.inhibits[0]
+    }
     function getAllTileEntities(tileArray){
         let entityList = [];
         console.log(tileArray)
@@ -137,6 +133,7 @@ GAME.TileController = function (settings, gameState) {
 
     this.initTile = initTile;
     this.Cursor = Cursor;
+    this.getFirstTileEntity = getFirstTileEntity;
     this.getAllTileEntities = getAllTileEntities;
 
     return this;

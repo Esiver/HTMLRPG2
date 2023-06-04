@@ -18,7 +18,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
 
         playerEntity: [],
         unitEntityList: [],
-        constructionEntityList : [],
+        TownEntityList : [],
         immortalEntityList: [],
         currentSelectEntity: [],
 
@@ -26,6 +26,13 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         currentSelectTile: [], // selected by the user, possibly by click
         currentHoverTile: [], // mouse hover
 
+        timeObject : {
+            hour:0,
+            day:0,
+            week:0,
+            month:0,
+            year:0
+        },
         tickCount:0,
 
 
@@ -36,6 +43,11 @@ GAME.GameScreen = function (jsonData, worldSettings) {
                 let indexToRemove = this.currentSelectEntity.indexOf(target)
                 this.currentSelectEntity.splice(indexToRemove, 1);
             }
+        },
+        addActiveEntityTile: function addActiveEntityTile(tile){
+            if(this.activeEntityTile.indexOf(tile) === -1) {
+                this.activeEntityTile.push(tile);
+            }
         }
 
     };
@@ -45,10 +57,6 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     let _PlayerController = GAME.PlayerController();
     let _InputController = GAME.InputController(worldSettings, 
         {
-            // onArrowLeft: moveEntityLeft,
-            // onArrowRight:moveEntityRight,
-            // onArrowUp:moveEntityUp,
-            // onArrowDown:moveEntityDown,
             onArrowLeft: moveCursorLeft,
             onArrowRight: moveCursorRight,
             onArrowUp: moveCursorUp,
@@ -57,7 +65,12 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         });
     let _EntityController = GAME.EntityController(worldSettings, gameState);
     let _MarkupController = GAME.MarkupController(worldSettings, gameState);
-    let _TimeController = GAME.TimeController();
+    let _TaskController = GAME.TaskController(worldSettings, gameState)
+    let _TimeController = GAME.TimeController(worldSettings, gameState, 
+        {
+            onSeasonChange: handleSeasonChange,
+            onYearChange: handleYearChange
+        });
 
 
 
@@ -94,6 +107,12 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         }
     }
 
+    function handleSeasonChange(){
+        console.log('game handle season change')
+    }
+    function handleYearChange(){
+
+    }
     function getTileFromCursor(cursor) {
         let roundedX = Math.floor(cursor.x / tileWidth);
         let roundedY = Math.floor(cursor.y / tileHeight);
@@ -114,6 +133,13 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         let tile = getTileFromCursor(cursor);
         handleSelectTile(tile)
     }
+    function isDefined(thing){
+        if (typeof thing != 'undefined'){
+            return true;
+        } else {
+            return false;
+        }
+    }
     function clearSelect(){
         gameState.currentSelectTile = [];
         _MarkupController.clearSelectTileDOM()
@@ -122,18 +148,29 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     }
     function handleSelectTile(tile) {
         console.log("handle select tile:", tile)
-        if(typeof tile != 'undefined'){
+        if(isDefined(tile)){
             clearSelect();
             tile.select(gameState);
         }
+
+        let autoSelect = true; // move to some kind of user-seetings
+        if(isDefined(tile) && autoSelect){ 
+            autoSelectTileEntity(tile)
+        }
         
     }
+    function autoSelectTileEntity(tile){
+        let tileFirstEntity = _TileController.getFirstTileEntity(tile);
+        if(isDefined(tileFirstEntity)){
+            tileFirstEntity.select()
+            
+        }
+    }
+
     function handleSelectEntity(entityList){
         console.log(entityList)
         // gameState.currentSelectEntity.push(entity);
     }
-
-
 
     // movement
     function moveCursorLeft(){
@@ -251,7 +288,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         });
 
         // need to specify new select tile - entities to move have moved away from select tile. So if we want to continue moving we have to get new tile :D
-        moveSelectY(1, gameState.currentSelectTile);
+        // moveSelectY(1, gameState.currentSelectTile);
     }
 
     
@@ -263,7 +300,7 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         ctx.clearRect(0, 0, worldSettings.canvas.width, worldSettings.canvas.height);
 
         // keep track of entities
-        gameState.constructionEntityList.forEach(entity => {
+        gameState.TownEntityList.forEach(entity => {
             // add to list of entityties to be animated... should I do this every update or only when needed?
             entity.update();
         });
@@ -283,19 +320,17 @@ GAME.GameScreen = function (jsonData, worldSettings) {
 
     function animate(e) {
         update();
-
         
         gameState.activeEntityTile.forEach(tile => {
             let drawColor = worldSettings.colors.tileFallback;
             if(tile.inhibits.length > 0){    
                 drawColor = tile.inhibits[0].displayColor
             }
-            
             tile.draw(worldSettings, drawColor);
         })
 
         gameState.currentHoverTile.forEach(tile => {
-            if(typeof tile != 'undefined'){
+            if(isDefined(tile)){
                 tile.draw(worldSettings, worldSettings.colors.mouseHover);
             }
             
@@ -305,16 +340,12 @@ GAME.GameScreen = function (jsonData, worldSettings) {
             tile.draw(worldSettings, worldSettings.colors.selectTile);
             
         })
-        
-
         resetStateTurn()
-
         setTimeout(function () {
             animate()
         }, 56);
-        
-
     }
+
     function gameTurn(){
         let entitiesToHandle = [];
         let tilesToHandle = gameState.activeEntityTile;
@@ -322,35 +353,62 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         tilesToHandle.forEach(tile=>{
             tile.inhibits.forEach(inhibitingEntity=>{
                 entitiesToHandle.push(inhibitingEntity);
-            })
-        })
-        
-        
+            });
+        });    
         entitiesToHandle.forEach(activeEntity =>{
-            // console.log("hadnle!", activeEntity)
             activeEntity.handleTurn();
         });
+
     }
+    
 
     function timeTicker(){
         gameTurn()
-
         setTimeout(function(){
-            gameState.tickCount ++;
+            _TimeController.handleTimeTick();
             timeTicker()
-        }, 460)
+        }, 50)
     }
 
     createWorld(worldSettings);
 
+
+
+
+
+
     
     let cStats = {}
     // _EntityController.createImmortalEntity(123123, {xPos: 8, yPos: 2, isPlayer:true}, cStats, worldSettings, gameState);
-    _EntityController.createConstructionEntity(123123, {xPos: 3, yPos: 2}, cStats, worldSettings, gameState);
-    _EntityController.createConstructionEntity(123123, {xPos: 4, yPos: 3}, cStats, worldSettings, gameState);
-    _EntityController.createImmortalEntity(111,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
-    _EntityController.createImmortalEntity(222,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
+    let Town1 = _EntityController.createTownEntity(123123, {xPos: 1, yPos: 2}, cStats, worldSettings, gameState);
+    _EntityController.createTownEntity(123123, {xPos: 8, yPos: 5}, cStats, worldSettings, gameState);
+    _EntityController.createImmortalEntity(111,{xPos: 2, yPos: 4},cStats, worldSettings, gameState)
+    // _EntityController.createImmortalEntity(222,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
+    // gameState.activeEntityTile
+    console.log('aaa',Town1)
 
+    let testSubject = gameState.immortalEntityList[0]
+    let testTile = gameState.tileMap[1][8];
+    let testTile2 = Town1.tile//gameState.tileMap[7][1];
+    let testMovementTaskSettings = {
+        type: 'movement',
+        id: 123,
+        entity: testSubject,
+        targetTile: testTile
+    }
+    let testMovementTaskSettings2 = {
+        type: 'movement',
+        id: 124,
+        entity: testSubject,
+        targetTile: testTile2
+    }
+
+    let testMovementTask = _TaskController.getNewTask(testMovementTaskSettings)
+    let testMovementTask2 = _TaskController.getNewTask(testMovementTaskSettings2)
+    testSubject.addTask(testMovementTask)
+    testSubject.addTask(testMovementTask2)
+    
+    // Town1.test()
     // gameState.activeEntityTile.push(gameState.tileMap[3][3]);
     
 

@@ -1,15 +1,19 @@
 GAME.EntityController = function (settings,gameState){
 
     let _MarkupController = GAME.MarkupController(settings);
+    let _TaskController = GAME.TaskController(settings, gameState)
 
     class Entity {
         constructor(id, tile, entitySettings){
             this.id = id;
             this.tile = tile;
             this.name = name;
+            this.portrait = '/assets/img/aleph.png';
+            this.thumbnail = '/assets/img/aleph.png';
             this.color;
             this.isPlayer = entitySettings != void 0 ? entitySettings.isPlayer : false;
-            this.isSelected;
+            this.taskList = [];
+            this.inventory = [];
             
             // if (entitySettings && entitySettings.isPlayer != void 0){
             //     this.isPlayer = entitySettings.isPlayer
@@ -27,7 +31,11 @@ GAME.EntityController = function (settings,gameState){
         handleChangeState(state, amount){
 
         }
-        moveEntityX(dir, gameState){
+        getEntityPortrait(){
+            return this.portrait;
+        }
+
+        moveEntityX(dir=0){
             let entitySelf = this;
             let currentTile = this.tile;
             let currentCoordinateX = currentTile.x;
@@ -44,7 +52,7 @@ GAME.EntityController = function (settings,gameState){
             targetTile.update();
         }
 
-        moveEntityY(dir, gameState){
+        moveEntityY(dir){
             let entitySelf = this;
             let currentTile = this.tile;
             let currentCoordinateX = currentTile.x;
@@ -70,20 +78,87 @@ GAME.EntityController = function (settings,gameState){
 
         }
         select(){
-            // this is now our selected 
+            // this is now our selected!
             if (!gameState.currentSelectEntity.some(entity => entity === this)){ // only if not already selected
+                gameState.clearSelectEntityList()
                 gameState.currentSelectEntity.push(this)
+
+                _MarkupController.updateEntitySelectListDOM();
             }
         }
         handleTurn(){
-            
+            if ( this.taskList.length > 0) {
+                this.handleTask(this.taskList[0])
+            } else {
+                this.handleIdle()
+            }
         }
+        addTask(task){
+            this.taskList.push(task);
+        }
+        removeTask(task=null){
+            if (task != null){
+                let indexToRemove = this.taskList.indexOf(task)
+                this.taskList.splice(indexToRemove, 1);
+            }
+        }
+        handleTask(task){
+            
+            switch (task.constructor.name) {
+                case 'MovementTask':
+                    if (this.checkMovementTask(this, task)){
+                        this.finishTask(task)
+                    } else {
+                        this.resolveMovementTask(task);
+                    }
+                    break;            
+                default:
+                    break;
+            }
+        }
+        checkMovementTask(entity, movementTask){
+            if (entity.tile == movementTask.targetTile){
+                return true
+            } else {
+                return false
+            }
+        }
+        resolveMovementTask(task){
+            let currentX = this.tile.x;
+            let currentY = this.tile.y;
+            let targetX = task.targetTile.x;
+            let targetY = task.targetTile.y;
+            let movementVectorX, movementVectorY = 0;
+            
+            if (currentX > targetX){
+                movementVectorX = -1;
+            } else if (currentX < targetX) {
+                movementVectorX = 1;
+            }
+
+            if (currentY > targetY){
+                movementVectorY = -1;
+            } else if (currentY  < targetY) {
+                movementVectorY = 1;
+            }
+            this.moveEntityY(movementVectorY)
+            this.moveEntityX(movementVectorX)
+        }
+        finishTask(task){
+            this.removeTask(task)
+        }
+
     }
-    class Action {
-        // constructor(entity, )
-        // TODO : CONTINUE HERE actions for gameturn
-    }
+
+    
+
     class Unit extends Entity {
+
+    }
+    class Monster extends Entity {
+
+    }
+    class Peasent extends Entity {
 
     }
     class Immortal extends Entity {
@@ -96,9 +171,28 @@ GAME.EntityController = function (settings,gameState){
             this.age = entitySettings.age;
             this.wealth = entitySettings.wealth;
             this.isPlayer = entitySettings.isPlayer;
+            this.homeTile = tile;
+        }
+        getGoHomeTask(){
+            let taskSettings = {
+                id: this.id + '-movement',
+                type:'movement',
+                entity: this,
+                targetTile: this.homeTile
+            }
+            let goHomeTask = _TaskController.getNewTask(taskSettings)
+            return goHomeTask;
+        }
+        handleIdle(){
+            // immortals go home on idle?
+            if(this.tile != this.homeTile) {
+                let idleTask = this.getGoHomeTask();                
+                this.addTask(idleTask)
+            }
+            
         }
     }
-    class Construction extends Entity {
+    class Town extends Entity {
         constructor(id, tile, entitySettings){
             super();
             // population
@@ -115,9 +209,18 @@ GAME.EntityController = function (settings,gameState){
             this.estYear = entitySettings.estYear;
             this.mayor = entitySettings.mayor;
             this.resources = entitySettings.resources;
-
+        }
+        handleSeasonChange(){
 
         }
+        handleIdle(){
+            // town does nothing on idle
+            
+        }
+        produceWealth(){
+            console.log('produce wealth')
+        }
+        
     }
 
     function moveEntity(Entity, toTile){
@@ -141,16 +244,17 @@ GAME.EntityController = function (settings,gameState){
         let newImmortalEntityObject = new Immortal(id, gameState.tileMap[xPos][yPos],entitySettingsObject)
         if (typeof newImmortalEntityObject.tile != 'undefined'){
             newImmortalEntityObject.tile.inhibits.push(newImmortalEntityObject);
-            gameState.activeEntityTile.push(newImmortalEntityObject.tile);
+
+            gameState.addActiveEntityTile(newImmortalEntityObject.tile);
             gameState.immortalEntityList.push(newImmortalEntityObject);
         }
         if(newImmortalEntityObject.isPlayer){
 
-            gameState.playerEntity.push(newImmortalEntityObject);
+            // gameState.playerEntity.push(newImmortalEntityObject);
             console.log('I AM ALIVE',newImmortalEntityObject)
         }
     }
-    function createConstructionEntity(id, settings, stats, worldSettings, gameState){
+    function createTownEntity(id, settings, stats, worldSettings, gameState){
         let xPos = settings.xPos;
         let yPos = settings.yPos;
         let entitySettingsObject = {
@@ -164,16 +268,18 @@ GAME.EntityController = function (settings,gameState){
                 iron : 1,
             }
         }
-        let newConstructionEntityObject = new Construction(id, gameState.tileMap[xPos][yPos], "Harry");
+        let newTownEntityObject = new Town(id, gameState.tileMap[xPos][yPos], "Harry");
 
-        if (typeof newConstructionEntityObject.tile != 'undefined') {
-            newConstructionEntityObject.tile.inhibits.push(newConstructionEntityObject);
-            gameState.activeEntityTile.push(newConstructionEntityObject.tile)
-            gameState.constructionEntityList.push(newConstructionEntityObject);
+        if (typeof newTownEntityObject.tile != 'undefined') {
+            newTownEntityObject.tile.inhibits.push(newTownEntityObject);
+            gameState.activeEntityTile.push(newTownEntityObject.tile)
+            gameState.TownEntityList.push(newTownEntityObject);
         }
+
+        return newTownEntityObject;
     }
 
-    this.createConstructionEntity = createConstructionEntity;
+    this.createTownEntity = createTownEntity;
     this.createImmortalEntity = createImmortalEntity;
     this.createUnitEntity = createUnitEntity;
     this.moveEntity = moveEntity;
