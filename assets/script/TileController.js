@@ -79,7 +79,7 @@ GAME.TileController = function (settings, gameState) {
             this.inhibits.push(entity);
             gameState.activeEntityTile.push(this);
         }
-        getImmortalDisplayMarkupString(immortalEntity){
+        getCreatureDisplayMarkupString(CreatureEntity){
             let html = `todo!`
             
 

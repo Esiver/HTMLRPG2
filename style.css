@@ -1,8 +1,8 @@
 .game-screen__row {
     display: flex;
+    gap: 0.5rem;
 }
 .game-screen__aside {
-    padding: 0;
     margin: 0;
     flex: 1;
     
@@ -26,7 +26,8 @@
     list-style-type: none;
     background-color: rgb(100, 149, 237);
     color: white;
-    padding: 0;
+    padding: 0.5rem;
+
     margin: 0;
     height: 2rem;
 }

@@ -1,7 +1,7 @@
-GAME.EntityController = function (settings,gameState){
+GAME.EntityController = function (worldSettings,gameState){
 
-    let _MarkupController = GAME.MarkupController(settings);
-    let _TaskController = GAME.TaskController(settings, gameState)
+    let _MarkupController = GAME.MarkupController(worldSettings);
+    let _TaskController = GAME.TaskController(worldSettings, gameState)
 
     class Entity {
         constructor(id, tile, entitySettings){
@@ -161,7 +161,7 @@ GAME.EntityController = function (settings,gameState){
     class Peasent extends Entity {
 
     }
-    class Immortal extends Entity {
+    class Creature extends Entity {
         constructor(id,tile,entitySettings){
             super();
             this.id = id;
@@ -184,7 +184,7 @@ GAME.EntityController = function (settings,gameState){
             return goHomeTask;
         }
         handleIdle(){
-            // immortals go home on idle?
+            // Creates go home on idle?
             if(this.tile != this.homeTile) {
                 let idleTask = this.getGoHomeTask();                
                 this.addTask(idleTask)
@@ -226,36 +226,95 @@ GAME.EntityController = function (settings,gameState){
     function moveEntity(Entity, toTile){
 
     }
-    function createEntities(entityJSON){
+    function createEntities(entityJSON = worldSettings.jsonData.entityList){
+        
+        let jsonEntityList = entityJSON.entityList
         let entityList = [];
-        console.log("createEntities", entityList)
+        
+        jsonEntityList.forEach(entityJSON => {
+            let entity = null;
+
+            let eId = entityJSON.id
+            let name = entityJSON.name;
+            let x = entityJSON.homeTile[0]; let y = entityJSON.homeTile[1];
+            let posObj = {xPos: x, yPos: y};
+            let entityType = entityJSON.type
+            let statObj = {}
+
+            console.log(1123,entityJSON)
+
+            switch (entityType) {
+                case 'creature':
+                    statObj = rollCreatureStats(entityJSON);
+                    let entityClass = entityJSON.class;
+                    let entityObj = {
+                        id: eId,
+                        name:name,
+                        type:entityType,
+                        posObj:posObj,
+                        statObj:statObj,
+                        class: entityClass
+                    }
+                    entity = createCreatureEntity(entityObj)
+                    console.log('entity:', entityObj)
+                    break;
+                case 'town':
+                    console.log('--- should create town entity')
+                    break;
+                default:
+                    break;
+            }
+ 
+            entityList.push(entity);
+
+        });
+        
+        
         return entityList;
     }
     function createUnitEntity(settings){
 
     };
-    
-    function createImmortalEntity (id, settings, stats, worldSettings, gameState){
-        let xPos = settings.xPos;
-        let yPos = settings.yPos;
+    function rollCreatureStats(entityJSON){
+        let baseStatsObj = worldSettings.jsonData.entityBase[entityJSON.class].stats
+
+        let baseBody = baseStatsObj.body;
+        let baseMind = baseStatsObj.mind;
+        let baseSoul = baseStatsObj.soul;
+        
+        let bodyStat = baseBody +  randomIntFromInterval((baseBody*0.25)*-1,baseBody*0.25);
+        let mindStat = baseMind + randomIntFromInterval((baseMind*0.25)*-1,baseMind*0.25);
+        let soulStat = baseSoul + randomIntFromInterval((baseSoul*0.25)*-1,baseSoul*0.25);
+        
+        return {body: bodyStat, mind: mindStat, soul: soulStat};
+    }
+    function randomIntFromInterval(min, max) { // min and max included 
+        return Math.floor(Math.random() * (max - min + 1) + min)
+    }
+      
+    function createCreatureEntity (entityObj){
+        console.log(99,entityObj)
+        let xPos = entityObj.posObj.xPos;
+        let yPos = entityObj.posObj.yPos;
+
         let entitySettingsObject = {
-            name : "Zu Zhu - "+ id,
+            name : entityObj.name,
             wealth: 1,
             age: 1,
             displayColor: worldSettings.colors.unitEntity,
             isPlayer: true,
         };
-        let newImmortalEntityObject = new Immortal(id, gameState.tileMap[xPos][yPos],entitySettingsObject)
-        if (typeof newImmortalEntityObject.tile != 'undefined'){
-            newImmortalEntityObject.tile.inhibits.push(newImmortalEntityObject);
+        let newCreatureEntityObject = new Creature(entityObj.id, gameState.tileMap[xPos][yPos], entitySettingsObject)
+        if (typeof newCreatureEntityObject.tile != 'undefined'){
+            newCreatureEntityObject.tile.inhibits.push(newCreatureEntityObject);
 
-            gameState.addActiveEntityTile(newImmortalEntityObject.tile);
-            gameState.immortalEntityList.push(newImmortalEntityObject);
+            gameState.addActiveEntityTile(newCreatureEntityObject.tile);
+            gameState.creatureEntityList.push(newCreatureEntityObject);
         }
-        if(newImmortalEntityObject.isPlayer){
+        if(newCreatureEntityObject.isPlayer){
 
-            // gameState.playerEntity.push(newImmortalEntityObject);
-            console.log('I AM ALIVE',newImmortalEntityObject)
+            // gameState.playerEntity.push(newCreatureEntityObject);
+            console.log('I AM ALIVE',newCreatureEntityObject)
         }
     }
     function createTownEntity(id, settings, stats, worldSettings, gameState){
@@ -285,7 +344,7 @@ GAME.EntityController = function (settings,gameState){
 
     this.createEntities = createEntities;
     this.createTownEntity = createTownEntity;
-    this.createImmortalEntity = createImmortalEntity;
+    this.createCreatureEntity = createCreatureEntity;
     this.createUnitEntity = createUnitEntity;
     this.moveEntity = moveEntity;
 

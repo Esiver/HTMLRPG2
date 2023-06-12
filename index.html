@@ -50,13 +50,13 @@
 <script type="module">
     // fetch json data
 import entityBase from '/assets/JSON/entity-base.json' assert {type: 'json'};
-import entityImmortal from '/assets/JSON/entity-immortal.json' assert {type: 'json'};
+import entityList from '/assets/JSON/entity-list.json' assert {type: 'json'};
 import questList from '/assets/JSON/quest-list.json' assert {type: 'json'};
 
 //
     let jsonData = {
         entityBase : entityBase,
-        entityImmortal : entityImmortal,
+        entityList : entityList,
         questList: questList
     }
 
@@ -89,10 +89,13 @@ import questList from '/assets/JSON/quest-list.json' assert {type: 'json'};
             tropicNorth: 0.4,
             tropicSouth: 0.6,
             humidity: 0.25
-        }
+        },
+
+
+        jsonData: jsonData
     }
 
-    let gameInstance = new GAME.GameScreen(jsonData, worldSettings);
+    let gameInstance = new GAME.GameScreen(worldSettings);
      
 </script>
 

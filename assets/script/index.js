@@ -1,5 +1,5 @@
 
-GAME.GameScreen = function (jsonData, worldSettings) {
+GAME.GameScreen = function (worldSettings) {
     const canvas = document.querySelector(worldSettings.canvas.selector);
     const ctx = canvas.getContext('2d');
     worldSettings.ctx = ctx;
@@ -11,13 +11,14 @@ GAME.GameScreen = function (jsonData, worldSettings) {
     worldSettings.tileHeight = tileHeight;
     worldSettings.tileWidth = tileWidth;
 
+
     let gameState = {
         multiSelectMode : false,
 
         playerEntity: [],
         unitEntityList: [],
         TownEntityList : [],
-        immortalEntityList: [],
+        creatureEntityList: [],
         currentSelectEntity: [],
 
         activeEntityTile: [], // all tiles that have entities, and should be listened to.
@@ -110,11 +111,14 @@ GAME.GameScreen = function (jsonData, worldSettings) {
         }
     }
     function createEntities(){
-        _EntityController.createEntities();
+        const allEntities = _EntityController.createEntities();
+
     }
 
     function createQuests(){
-        _QuestController.createQuests();
+        const allQuest = _QuestController.createQuests();
+        _QuestController.assignAllQuestsFromList(allQuest);
+
     }
 
     function handleSeasonChange(){
@@ -389,15 +393,15 @@ GAME.GameScreen = function (jsonData, worldSettings) {
 
     
     let cStats = {}
-    // _EntityController.createImmortalEntity(123123, {xPos: 8, yPos: 2, isPlayer:true}, cStats, worldSettings, gameState);
+    // _EntityController.createcreatureEntity(123123, {xPos: 8, yPos: 2, isPlayer:true}, cStats, worldSettings, gameState);
     let Town1 = _EntityController.createTownEntity(123123, {xPos: 1, yPos: 2}, cStats, worldSettings, gameState);
     _EntityController.createTownEntity(123123, {xPos: 8, yPos: 5}, cStats, worldSettings, gameState);
-    _EntityController.createImmortalEntity(111,{xPos: 2, yPos: 4},cStats, worldSettings, gameState)
-    // _EntityController.createImmortalEntity(222,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
+    // _EntityController.createCreatureEntity(123,{xPos: 2, yPos: 4},cStats, worldSettings, gameState)
+    // _EntityController.createCreatureEntity(222,{xPos: 5, yPos: 5},cStats, worldSettings, gameState)
     // gameState.activeEntityTile
-    console.log('aaa',Town1)
+    
 
-    let testSubject = gameState.immortalEntityList[0]
+    let testSubject = gameState.creatureEntityList[0]
     let testTile = gameState.tileMap[1][8];
     let testTile2 = Town1.tile//gameState.tileMap[7][1];
     let testMovementTaskSettings = {

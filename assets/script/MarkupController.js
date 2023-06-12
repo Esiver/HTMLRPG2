@@ -144,7 +144,6 @@ GAME.MarkupController = function (settings, gameState) {
         let timebarSeason = document.querySelector(domSelect.timebarSeason);
         
         timebarYear.innerHTML = 'year '+gameState.timeObject.year;
-        console.log(gameState.timeObject)
         timebarSeason.innerHTML = ' - '+gameState.timeObject.seasonName;
     }
 

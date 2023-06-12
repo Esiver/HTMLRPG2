@@ -6,6 +6,13 @@
             "start" : {"type": "entity", "target": 123, "init": "auto"},
             "objective" : {"type": "tile", "target": [7,7]}
             
+        },
+        {
+            "name": "quest name 2",
+            "description" : "quest 2 description",
+            "start" : {"type": "entity", "target": 123, "init": "auto"},
+            "objective" : {"type": "tile", "target": [7,7]}
+            
         }
     ]
 }

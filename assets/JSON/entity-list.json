@@ -1,0 +1,19 @@
+{
+    
+    "entityList": [
+        {
+            "id": 1,
+            "name": "Hai Sheng Yi",
+            "type": "creature",
+            "class": "peasant",
+            "questList": [
+                123,
+                124
+            ],
+            "itemList": [],
+            "homeTile": [16,6]
+            
+        }
+        
+    ]
+}

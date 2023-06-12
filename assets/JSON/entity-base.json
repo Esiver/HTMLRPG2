@@ -1,20 +1,48 @@
 {
-    "immortal": {
-        "greet": [
-            "greet test 1",
-            "greet test 2"
-
-        ],
-        "exit" : [
-            "exit test 1",
-            "exit test 2"
-        ]
+    "soldier": {
+        "dialogue": {
+            "greet": [
+                "greet test 1",
+                "greet test 2"
+    
+            ],
+            "exit" : [
+                "exit test 1",
+                "exit test 2"
+            ]
+        },
+        "stats": {
+            "body":4,
+            "mind":3,
+            "soul":2
+        }
+        
         
     },
     "peasant": {
-        "greet": [
-            "peasant greet test 1"
-        ]
+        "dialogue": {
+            "greet": [
+                "peasant greet test 1"
+            ]
+        },
+        "stats": {
+            "body":4,
+            "mind":2,
+            "soul":3
+        }
+        
+    },
+    "sage": {
+        "dialogue": {
+            "greet": [
+                "sage greet test 1"
+            ]
+        },
+        "stats": {
+            "body":2,
+            "mind":3,
+            "soul":4
+        }
+        
     }
-
 }
