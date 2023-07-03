@@ -1,4 +1,5 @@
 GAME.EntityController = function (worldSettings,gameState){
+    const settings = worldSettings;
 
     let _MarkupController = GAME.MarkupController(worldSettings);
     let _TaskController = GAME.TaskController(worldSettings, gameState)
@@ -8,19 +9,12 @@ GAME.EntityController = function (worldSettings,gameState){
             this.id = id;
             this.tile = tile;
             this.name = name;
-            this.portrait = '/assets/img/emilmonster.png';
-            this.thumbnail = '/assets/img/emilmonster.png';
             this.color;
             this.isPlayer = entitySettings != void 0 ? entitySettings.isPlayer : false;
             this.taskList = [];
             this.inventory = [];
             
-            // if (entitySettings && entitySettings.isPlayer != void 0){
-            //     this.isPlayer = entitySettings.isPlayer
-            // } else {
-            //     this.isPlayer = false
-            // }
-
+            
         };
         
         update() {
@@ -82,7 +76,6 @@ GAME.EntityController = function (worldSettings,gameState){
             if (!gameState.currentSelectEntity.some(entity => entity === this)){ // only if not already selected
                 gameState.clearSelectEntityList()
                 gameState.currentSelectEntity.push(this)
-
                 _MarkupController.updateEntitySelectListDOM();
             }
         }
@@ -93,6 +86,7 @@ GAME.EntityController = function (worldSettings,gameState){
                 this.handleIdle()
             }
         }
+
         addTask(task){
             this.taskList.push(task);
         }
@@ -116,6 +110,7 @@ GAME.EntityController = function (worldSettings,gameState){
                     break;
             }
         }
+
         checkMovementTask(entity, movementTask){
             if (entity.tile == movementTask.targetTile){
                 return true
@@ -123,6 +118,7 @@ GAME.EntityController = function (worldSettings,gameState){
                 return false
             }
         }
+
         resolveMovementTask(task){
             let currentX = this.tile.x;
             let currentY = this.tile.y;
@@ -142,10 +138,34 @@ GAME.EntityController = function (worldSettings,gameState){
                 movementVectorY = 1;
             }
             this.moveEntityY(movementVectorY)
-            this.moveEntityX(movementVectorX)
+            this.moveEntityX(movementVectorX) // move diagonally?
         }
+
         finishTask(task){
-            this.removeTask(task)
+            this.removeTask(task);
+        }
+        getDialogueEntryString(){
+            let string = '...';
+            // if(this.dialogue)
+            if(isDefined(this.dialogue) && this.dialogue.entry.length > 0){
+                string = this.dialogue.entry
+            }
+            
+            return string;
+        }
+        getDialogueChildrenList(){
+            let childList = []
+            if(isDefined(this.dialogue)){
+                this.dialogue.children.forEach(childId => {
+                    childList.push(getMatchingDialogueFromId(childId))
+                })
+            }
+            return childList;
+        }
+        getEntityDialogueObject(dialogueId){
+            let dialogueObject = getMatchingDialogueFromId(dialogueId);
+            
+            return dialogueObject;
         }
 
     }
@@ -167,11 +187,21 @@ GAME.EntityController = function (worldSettings,gameState){
             this.id = id;
             this.tile = tile;
             this.displayColor = entitySettings.displayColor
+            if (typeof entitySettings != 'undefined'){
+                
+                this.portrait = '/assets/img/' + entitySettings.portraitImage;
+                this.thumbnail = '/assets/img/' + entitySettings.thumbnailImage;    
+            } else {
+                this.portrait = '/assets/img/aleph.png';
+                this.thumbnail = '/assets/img/aleph.png';
+                
+            }
             this.name = entitySettings.name;
             this.age = entitySettings.age;
             this.wealth = entitySettings.wealth;
             this.isPlayer = entitySettings.isPlayer;
-            this.homeTile = tile;
+            this.homeTile = tile;   
+            this.dialogue = entitySettings.dialogue;
         }
         getGoHomeTask(){
             let taskSettings = {
@@ -180,33 +210,36 @@ GAME.EntityController = function (worldSettings,gameState){
                 entity: this,
                 targetTile: this.homeTile
             }
-            let goHomeTask = _TaskController.getNewTask(taskSettings)
+            let goHomeTask = _TaskController.getNewTask(taskSettings);
+
             return goHomeTask;
         }
         handleIdle(){
             // Creates go home on idle?
+
             if(this.tile != this.homeTile) {
                 let idleTask = this.getGoHomeTask();                
                 this.addTask(idleTask)
             }
-            
         }
     }
     class Town extends Entity {
         constructor(id, tile, entitySettings){
             super();
-            // population
-            // population mood?
-            // wealth
-            // established year
-            // mayor
-            // resources
-            // produces - uses
             this.id = id;
             this.tile = tile;
+            if (typeof entitySettings != 'undefined'){
+                
+                this.portrait = '/assets/img/' + entitySettings.portraitImage;
+                this.thumbnail = '/assets/img/' + entitySettings.thumbnailImage;    
+            } else {
+                this.portrait = '/assets/img/aleph.png';
+                this.thumbnail = '/assets/img/aleph.png';
+                
+            }
             this.population = entitySettings.population;
             this.wealth = entitySettings.wealth;
-            this.estYear = entitySettings.estYear;
+            this.estYear = gameState.timeObject.year ;
             this.mayor = entitySettings.mayor;
             this.resources = entitySettings.resources;
         }
@@ -215,10 +248,10 @@ GAME.EntityController = function (worldSettings,gameState){
         }
         handleIdle(){
             // town does nothing on idle
-            
+            // this.produceWealth()
         }
         produceWealth(){
-            console.log('produce wealth')
+            console.log('produce wealth');
         }
         
     }
@@ -226,6 +259,7 @@ GAME.EntityController = function (worldSettings,gameState){
     function moveEntity(Entity, toTile){
 
     }
+
     function createEntities(entityJSON = worldSettings.jsonData.entityList){
         
         let jsonEntityList = entityJSON.entityList
@@ -233,39 +267,23 @@ GAME.EntityController = function (worldSettings,gameState){
         
         jsonEntityList.forEach(entityJSON => {
             let entity = null;
-
-            let eId = entityJSON.id
-            let name = entityJSON.name;
-            let x = entityJSON.homeTile[0]; let y = entityJSON.homeTile[1];
-            let posObj = {xPos: x, yPos: y};
             let entityType = entityJSON.type
-            let statObj = {}
-
-            console.log(1123,entityJSON)
-
             switch (entityType) {
                 case 'creature':
-                    statObj = rollCreatureStats(entityJSON);
-                    let entityClass = entityJSON.class;
-                    let entityObj = {
-                        id: eId,
-                        name:name,
-                        type:entityType,
-                        posObj:posObj,
-                        statObj:statObj,
-                        class: entityClass
-                    }
-                    entity = createCreatureEntity(entityObj)
-                    console.log('entity:', entityObj)
+                    entity = createCreatureEntity(entityJSON)
                     break;
                 case 'town':
-                    console.log('--- should create town entity')
+                    
+                    entity = createTownEntity(entityJSON)
                     break;
                 default:
                     break;
             }
- 
-            entityList.push(entity);
+            if (entity != null) {
+                entityList.push(entity);
+            } else {
+                console.warn('Entity not setup properly - couldnt create entity Object ');
+            }
 
         });
         
@@ -275,6 +293,11 @@ GAME.EntityController = function (worldSettings,gameState){
     function createUnitEntity(settings){
 
     };
+    function rollTownStats(entityJSON){
+        // let baseStatsObj = worldSettings.jsonData.entityBase[entityJSON.class].stats;
+
+        return {gold: 10, population: 1000};
+    }
     function rollCreatureStats(entityJSON){
         let baseStatsObj = worldSettings.jsonData.entityBase[entityJSON.class].stats
 
@@ -288,39 +311,118 @@ GAME.EntityController = function (worldSettings,gameState){
         
         return {body: bodyStat, mind: mindStat, soul: soulStat};
     }
-    function randomIntFromInterval(min, max) { // min and max included 
-        return Math.floor(Math.random() * (max - min + 1) + min)
+    function getEntityDialogueObjectList(entityJson){
+        let dialogueObj = null;
+        
+        let entityBase = worldSettings.jsonData.entityBase;
+        let soldierBase = entityBase.soldier;
+        let peasantBase = entityBase.peasant;
+        let sageBase = entityBase.sage;
+        
+        let dialogueId = entityJson.dialogue;
+        dialogueObj = getMatchingDialogueFromId(dialogueId[0]);
+        
+        // switch (classType) {
+        //     case 'peasant':
+                
+        //         dialogueObj = {
+        //             start: peasantBase.dialogue.start,
+        //             exit: peasantBase.dialogue.exit
+        //         }
+        //         break;
+        //     case 'soldier':
+        //         break;
+        //     case 'sage':
+        //         break;
+        //     default:
+        //         break;
+        // }
+
+        return dialogueObj
     }
-      
-    function createCreatureEntity (entityObj){
-        console.log(99,entityObj)
-        let xPos = entityObj.posObj.xPos;
-        let yPos = entityObj.posObj.yPos;
+    function getMatchingDialogueFromId(dialogueId){
+        let dialogueArray = gameState.dialogueList; //settings.jsonData.dialogue.dialogue;
+        return dialogueObj = dialogueArray.find(obj => obj.id === dialogueId);
+    }
+
+    function getEntityPortrait(entityJSON){
+        let portraitImage = 'default_portrait.png'
+        if (typeof entityJSON.portraitImage != 'undefined'){
+            portraitImage = entityJSON.portraitImage;
+        }
+        return portraitImage;
+    }
+    function getEntityThumbnail(entityJSON){
+        let thumbnailImage = 'default_thumbnail.png'
+        if (typeof entityJSON.thumbnailImage != 'undefined'){
+            thumbnailImage = entityJSON.thumbnailImage;
+        }
+        return thumbnailImage;
+    }
+    function createCreatureEntity(entityJSON){
+        // prepare creature for game.
+
+        let entityId = entityJSON.id;
+        let name = entityJSON.name;
+        let xPos = entityJSON.homeTile[0]; 
+        let yPos = entityJSON.homeTile[1];
+        let statObj = {wealth: 1, age: 1};
+        let entityClass = entityJSON.class;
+
+        let portraitImage = getEntityPortrait(entityJSON)//'defaultPortrait.png'; 
+        let thumbnailImage = getEntityThumbnail(entityJSON);//'defaultThumbnail.png';
+        let dialogueObj;
+        
+        statObj = rollCreatureStats(entityJSON);
+        dialogueObj = getEntityDialogueObjectList(entityJSON);
 
         let entitySettingsObject = {
-            name : entityObj.name,
+            id: entityId,
+            name : name,
+            stats:statObj,
             wealth: 1,
             age: 1,
+            portraitImage: portraitImage,
+            thumbnailImage: thumbnailImage,
             displayColor: worldSettings.colors.unitEntity,
             isPlayer: true,
+            dialogue: dialogueObj,
+            homeTile: gameState.tileMap[xPos][yPos]
         };
-        let newCreatureEntityObject = new Creature(entityObj.id, gameState.tileMap[xPos][yPos], entitySettingsObject)
+        
+        let newCreatureEntityObject = new Creature(entityId, gameState.tileMap[xPos][yPos], entitySettingsObject)
+
         if (typeof newCreatureEntityObject.tile != 'undefined'){
             newCreatureEntityObject.tile.inhibits.push(newCreatureEntityObject);
 
             gameState.addActiveEntityTile(newCreatureEntityObject.tile);
             gameState.creatureEntityList.push(newCreatureEntityObject);
         }
-        if(newCreatureEntityObject.isPlayer){
-
-            // gameState.playerEntity.push(newCreatureEntityObject);
-            console.log('I AM ALIVE',newCreatureEntityObject)
-        }
+        
     }
-    function createTownEntity(id, settings, stats, worldSettings, gameState){
-        let xPos = settings.xPos;
-        let yPos = settings.yPos;
+    function createTownEntity(entityJSON){
+        let entityId = entityJSON.id;
+        let name = entityJSON.name;
+        let xPos = entityJSON.homeTile[0]; 
+        let yPos = entityJSON.homeTile[1];
+        
+        let statObj = rollTownStats(entityJSON);
+        let portraitImage = getEntityPortrait(entityJSON)//'defaultPortrait.png'; 
+        let thumbnailImage = getEntityThumbnail(entityJSON);//'defaultThumbnail.png';
+
+        if (typeof entityJSON.thumbnailImage != 'undefined'){
+            thumbnailImage = entityJSON.thumbnailImage;
+        }
+        
+        if (typeof entityJSON.portraitImage != 'undefined'){
+            portraitImage = entityJSON.portraitImage;
+        }
+        
         let entitySettingsObject = {
+            id: entityId,
+            name: name,
+            portraitImage: portraitImage,
+            thumbnailImage: thumbnailImage,
             population : 1,
             wealth: 1,
             estYear: 1,
@@ -329,9 +431,11 @@ GAME.EntityController = function (worldSettings,gameState){
                 grain : 1,
                 stone : 1,
                 iron : 1,
-            }
+            },
+            homeTile: gameState.tileMap[xPos][yPos]
+
         }
-        let newTownEntityObject = new Town(id, gameState.tileMap[xPos][yPos], "Harry");
+        let newTownEntityObject = new Town(entityId, gameState.tileMap[xPos][yPos], entitySettingsObject);
 
         if (typeof newTownEntityObject.tile != 'undefined') {
             newTownEntityObject.tile.inhibits.push(newTownEntityObject);
@@ -340,6 +444,17 @@ GAME.EntityController = function (worldSettings,gameState){
         }
 
         return newTownEntityObject;
+    }
+
+    function isDefined(thing){
+        if (typeof thing != 'undefined'){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function randomIntFromInterval(min, max) { // min and max included 
+        return Math.floor(Math.random() * (max - min + 1) + min)
     }
 
     this.createEntities = createEntities;

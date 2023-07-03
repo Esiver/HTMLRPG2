@@ -9,12 +9,12 @@ GAME.QuestController = function (worldSettings, gameState) {
         }
 
         init(){
-            console.log("init", this)
+            console.log("Init Quest:", this)
         }
     }
 
     function init(){
-        console.log("init quest controller");
+        console.log("... Init Quest controller.");
     }
     function assignAllQuestsFromList(questObjList){
         questObjList.forEach(quest => {
@@ -32,8 +32,8 @@ GAME.QuestController = function (worldSettings, gameState) {
         });
     }
     function assignQuestToEntity(questObj){
-        console.log(questObj.start.target)
-        console.log(gameState.creatureEntityList) // cannot assign quests to entities before entities have been made!
+        // console.log(questObj.start.target)
+        // console.log(gameState.creatureEntityList) // cannot assign quests to entities before entities have been made!
         // need to make entity generator happen.
     }
     function assignQuestToTile(questObj){

@@ -1,0 +1,42 @@
+{
+    "dialogue": [
+        {
+            "entry" : "您好，欢迎光临香山！",
+            "id": 8,
+            "response" : "That's my line!",
+            "children": [9, 11]
+        },
+        {
+            "entry" : "你是谁？",
+            "id" : 9,
+            "response" : "我是海生一",
+            "children": [10]
+        },
+        
+        {
+            "entry" : "有没有看阳光开眼孔子之？",
+            "id" : 11,
+            "response" : "你不够努力！",
+            "children": [12, 13]
+        },
+        {
+            "entry" : "The night is dark and full of terrors",
+            "id" : 12,
+            "response" : "Lord of Light defend us",
+            "children": [10]
+        },
+        {
+            "entry" : "Valar Mogulis!",
+            "id" : 13,
+            "response" : "Valar dohaeris.",
+            "children": [8]
+        },
+        {
+            "entry":"The small town is poor and desolate. You see few people on the street but a beggar and a crying widow.",
+            "id": 201,
+            "response": null,
+            "children": null
+        }
+
+    ]
+}

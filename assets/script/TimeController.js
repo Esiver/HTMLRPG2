@@ -6,6 +6,7 @@ GAME.TimeController = function (worldSettings, gameState, callbacks) {
     }
 
     function init() {
+        console.log('... Init Time Controller.')
         recordTimePoint(0 , "start Time");
         callbacks.onSeasonChange();
         callbacks.onYearChange();
@@ -85,7 +86,7 @@ GAME.TimeController = function (worldSettings, gameState, callbacks) {
             id: refId,
             description : ""
         }
-        console.log(state)
+        
         state.timePointArray.push()
     }
 

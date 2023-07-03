@@ -11,8 +11,30 @@
                 124
             ],
             "itemList": [],
-            "homeTile": [16,6]
+            "homeTile": [8,6],
+            "portraitImage":"beastportrait_1.png",
+            "thumbnailImage":"beastportrait_1+thumbnail.png",
+            "dialogue": [8]
+
             
+        },
+        {
+            "id":2,
+            "name":"Nongcun",
+            "type":"town",
+            "homeTile":[2,2],
+            "portraitImage":"town1.png",
+            "thumbnailImage":"town1.png",
+            "dialogue":[201]
+
+        },
+        {
+            "id":3,
+            "name":"Nongcun 2",
+            "type":"town",
+            "homeTile":[6,4],
+            "portraitImage":"town1.png",
+            "thumbnailImage":"town1.png"
         }
         
     ]

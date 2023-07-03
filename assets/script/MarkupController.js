@@ -9,19 +9,31 @@ GAME.MarkupController = function (settings, gameState) {
 
         entityStatList : 'entity__stat-list',
         entityStatItem: 'entity__stat-item',
+        entityProfileContainer: 'entity__profile',
+        entityPortraitWrapper: 'entity__portrait-wrapper',
+        entitySpeech: 'entity__speech-bubble',
+
+
+        dialogueList: 'dialogue__list',
+        dialogueOption: 'dialogue__list-item',
+        dialogueOptionNull: 'null-option',
+        dialogueText : 'dialogue__text',
 
         tileSelectItem: 'select__list-item',
         tileSelectItemActive: 'active',
-
-
         
     }
     const domSelect = {
         userEntitySelectContainerSelector:"#entity-select-list",
         userTileSelectContainerSelector: "#tile-select-list",
+
         timebarYear: "#time-year",
         timebarSeason: "#time-season",
-        timebarDay: "#time-day"
+        timebarDay: "#time-day",
+
+        enititySpeech: `.${domClass.entitySpeech}`,
+
+        dialogueList: `.${domClass.dialogueList}`
 
     }
     function placeMarkup(markup,destination){
@@ -62,21 +74,96 @@ GAME.MarkupController = function (settings, gameState) {
 
         return buttonDOM
     }
+    function getDialogue(dialogueObject){
+        let dialogueDOM = document.createElement("div");
+        dialogueDOM.innerText = "xD"
+        console.log("GET DIALOGUE", dialogueObject )
+        return dialogueDOM;
+    }
+    function getEntityDialogueOptionListDOM(dialogueOptionObjectList){
+        let dialogueListDOM = document.createElement('ul');
+        dialogueListDOM.classList.add(domClass.dialogueList);
+
+        if(isDefined(dialogueOptionObjectList)) {
+            dialogueOptionObjectList.forEach(dialogueObject => {
+                let dialogueOptionDOM = getDialogueOptionDOM(dialogueObject);
+                dialogueListDOM.append(dialogueOptionDOM)
+            })
+
+        } else {
+            renderNoDialogueOptions()
+
+        }
+
+        return dialogueListDOM
+    }
+
+    function getDialogueOptionDOM(dialogueObject) {
+        let dialogueOptionDOM = document.createElement('a');
+        let text = "...";
+        if (isDefined(dialogueObject) && isDefined(dialogueObject.entry)) {
+            text = dialogueObject.entry;
+
+            dialogueOptionDOM.addEventListener('click', function handleDialogueOptionClick(){
+                let dialogueOptionResponse = dialogueObject.response;
+                let dialogueChildrenId = dialogueObject.children;
+                let dialogueChildrenObjectList = [];
+                let parentNodeList = this.parentNode;
+                
+                if (isDefined(dialogueChildrenId) && dialogueChildrenId != null) {
+                    dialogueChildrenId.forEach(id => {
+                        let dialogueChildObject = dialogueObject.getDialogueFromId(id);
+                        dialogueChildrenObjectList.push(dialogueChildObject);
+                    })    
+                } else {
+                    renderNoDialogueOptions();
+                }
+                
+                renderDialogueText(dialogueOptionResponse);
+                renderDialogueOptions(parentNodeList, dialogueChildrenObjectList);
+            })
+        } else {
+            return null
+        }
+
+        dialogueOptionDOM.innerText = text;
+        dialogueOptionDOM.classList.add(domClass.dialogueOption);
+
+        
+        
+        return  dialogueOptionDOM
+    }
+    function renderDialogueText(text){
+        let speechBubble = document.querySelector(domSelect.enititySpeech);
+        speechBubble.innerText = text;
+        
+    }
+    function renderDialogueOptions(container, dialogueObjectList){
+        container.innerText = "";
+    
+        dialogueObjectList.forEach(dialogueObject => {
+            let updatedDialogueOptionDOM = getDialogueOptionDOM(dialogueObject);
+            if(updatedDialogueOptionDOM != null){
+                container.append(updatedDialogueOptionDOM)
+
+            }
+        })
+
+    }
+    function renderNoDialogueOptions(){
+        document.querySelector(domSelect.dialogueList).remove();
+    }
+
     function renderTileSelect(entity){
         let inhibitsListItemDOM = document.createElement('li');
         let nameField = document.createElement('h4');
         let buttonClickCallback = function selectEntityBtnClick(){
-            // tilføj til valgte
-            // rendér liste af valgte 
             entity.select();
-            // updateEntitySelectListDOM();
-            console.log("now selected entities: ", gameState.currentSelectEntity)
         }
 
         let selectEntityButton = getButton({buttonText: 'select', buttonClickCallback: buttonClickCallback});
         
         nameField.innerText = entity.name;
-
         inhibitsListItemDOM.classList.add(domClass.tileSelectItem)
 
         inhibitsListItemDOM.append(nameField);
@@ -89,7 +176,6 @@ GAME.MarkupController = function (settings, gameState) {
         let entitiesToRender = gameState.currentSelectEntity;
         clearSelectEntityDOM();
         entitiesToRender.forEach(entity=> {
-            console.log("rendering:" , entity)
             renderEntitySelect(entity);
         })
     }
@@ -101,7 +187,7 @@ GAME.MarkupController = function (settings, gameState) {
     function getTaskListDOM(entity){
         let taskListDOM = document.createElement('ul');
 
-        if(typeof entity.taskList != 'undefined' || entity.taskList.length == 0){
+        if(isDefined(entity.taskList)  || entity.taskList.length == 0){
             entity.taskList.forEach(task => {
                 let taskItemDOM = document.createElement('li');
                 taskListDOM.innerHTML = task.constructor.name;
@@ -112,29 +198,52 @@ GAME.MarkupController = function (settings, gameState) {
         return taskListDOM
     }
     function renderEntitySelect(entity){
+       // declaring 
         let entitySelectDOM = document.createElement('li');
+
+        let entityProfileContainerDOM = document.createElement('div');
+
+        let entityPortraitWrapperDOM = document.createElement('div');
         let entityPortraitDOM = document.createElement('img');
+        let entitySpeechDOM = document.createElement('div');
+
         let entityNameDOM = document.createElement('h3');
         let entityStatListDOM = document.createElement('ul');
         let entityWealthDOM = document.createElement('li');
+        
+        let entityDialogueOptionList = entity.getDialogueChildrenList()
+        let entityDialogueOptionListDOM = getEntityDialogueOptionListDOM(entityDialogueOptionList);
         let entityTaskListDOM = getTaskListDOM(entity);
-        let buttonClickCallback = handleSelectEntityClearButton;
-        let entityUnselectButtonDOM = getButton({buttonText:'Clear', buttonClickCallback:buttonClickCallback})
+        let buttonClickCallback = handleSelectEntityClearButton; // todo: redo?
+        let entityUnselectButtonDOM = getButton({buttonText:'Leave', buttonClickCallback:buttonClickCallback})
         
-        entitySelectDOM.classList.add(domClass.tileSelectItem)
+        //classes
+        entitySelectDOM.classList.add(domClass.tileSelectItem);
+        entityProfileContainerDOM.classList.add(domClass.entityProfileContainer);
+        entityPortraitWrapperDOM.classList.add(domClass.entityPortraitWrapper);
+        entitySpeechDOM.classList.add(domClass.entitySpeech);
 
-        entityPortraitDOM.setAttribute('src', entity.getEntityPortrait())
+        // attributes & values
+        entityPortraitDOM.setAttribute('src', entity.getEntityPortrait());
         entityNameDOM.innerHTML = entity.name;
-        entityWealthDOM.innerHTML = 'Wealth: '+entity.wealth;
-        
-        entitySelectDOM.append(entityPortraitDOM)
-        entitySelectDOM.append(entityNameDOM);
-        entitySelectDOM.append(entityStatListDOM)
-        entityStatListDOM.append(entityWealthDOM);
+        entityWealthDOM.innerHTML = 'Wealth: ' + entity.wealth;
+        entitySpeechDOM.innerHTML = entity.getDialogueEntryString();
+
+        // appending
+        entityPortraitWrapperDOM.append(entityPortraitDOM)
+        entityPortraitWrapperDOM.append(entitySpeechDOM)
+
+        entityProfileContainerDOM.append(entityNameDOM);
+        entityProfileContainerDOM.append(entityPortraitWrapperDOM);
+        entityProfileContainerDOM.append(entityStatListDOM);        
+
+        entitySelectDOM.append(entityProfileContainerDOM);
         entitySelectDOM.append(entityTaskListDOM)
+        entitySelectDOM.append(entityDialogueOptionListDOM)
         entitySelectDOM.append(entityUnselectButtonDOM)
 
         document.querySelector(domSelect.userEntitySelectContainerSelector).append(entitySelectDOM);
+        
 
         return 0;
     }
@@ -143,10 +252,22 @@ GAME.MarkupController = function (settings, gameState) {
         let timebarYear = document.querySelector(domSelect.timebarYear);
         let timebarSeason = document.querySelector(domSelect.timebarSeason);
         
-        timebarYear.innerHTML = 'year '+gameState.timeObject.year;
-        timebarSeason.innerHTML = ' - '+gameState.timeObject.seasonName;
+        if(isDefined(gameState) && isDefined(gameState.timeObject)){
+            timebarYear.innerHTML = 'year '+gameState.timeObject.year;
+            timebarSeason.innerHTML = ' - '+gameState.timeObject.seasonName;
+        }
+        
     }
 
+    function isDefined(thing){
+        if (typeof thing != 'undefined'){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    this.getDialogue = getDialogue;
     this.renderTimeBar = renderTimeBar;
     this.clearSelectEntityDOM = clearSelectEntityDOM;
     this.clearSelectTileDOM = clearSelectTileDOM;

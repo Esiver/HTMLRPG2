@@ -14,6 +14,8 @@
     <script type="text/javascript" src="/assets/script/InputController.js"></script>
     <script type="text/javascript" src="/assets/script/EntityController.js"></script>
     <script type="text/javascript" src="/assets/script/QuestController.js"></script>
+    <script type="text/javascript" src="/assets/script/DialogueController.js"></script>
+
 
     <script type="text/javascript" src="/assets/script/TileController.js"></script>
     <script type="text/javascript" src="/assets/script/TimeController.js"></script>
@@ -36,6 +38,9 @@
             </ul>
             <ul class="select__list" id="entity-select-list"></ul>
 
+            <div class="dialogue__container" id="dialogue-container">
+
+            </div>
         </aside>
         
 
@@ -49,12 +54,14 @@
 
 <script type="module">
     // fetch json data
+import dialogue from '/assets/JSON/dialogue.json' assert {type: 'json'};
 import entityBase from '/assets/JSON/entity-base.json' assert {type: 'json'};
 import entityList from '/assets/JSON/entity-list.json' assert {type: 'json'};
 import questList from '/assets/JSON/quest-list.json' assert {type: 'json'};
 
 //
     let jsonData = {
+        dialogue: dialogue,
         entityBase : entityBase,
         entityList : entityList,
         questList: questList
@@ -64,8 +71,8 @@ import questList from '/assets/JSON/quest-list.json' assert {type: 'json'};
     let worldSettings = {
         canvas: {
             selector: "#map",
-            height: 300,
-            width: 300
+            height: 400,
+            width: 400
         },
         selectDom: {
             container : "#select-container",
@@ -80,8 +87,8 @@ import questList from '/assets/JSON/quest-list.json' assert {type: 'json'};
             unitEntity:"#b4bd6a",
             constructionEntity:"darkblue",
         },
-        xTiles: 30,
-        yTiles: 30,
+        xTiles: 10,
+        yTiles: 10,
         daysInYear: 365,
         environment: {
             tundraNorth: 0.1,

@@ -1,7 +1,7 @@
 {
     "soldier": {
         "dialogue": {
-            "greet": [
+            "start": [
                 "greet test 1",
                 "greet test 2"
     
@@ -21,9 +21,10 @@
     },
     "peasant": {
         "dialogue": {
-            "greet": [
+            "start": [
                 "peasant greet test 1"
-            ]
+            ],
+            "exit":["peasant exit test 1"]
         },
         "stats": {
             "body":4,
@@ -34,7 +35,7 @@
     },
     "sage": {
         "dialogue": {
-            "greet": [
+            "start": [
                 "sage greet test 1"
             ]
         },

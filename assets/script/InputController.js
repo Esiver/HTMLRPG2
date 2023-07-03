@@ -2,7 +2,7 @@ GAME.InputController = function (worldSettings, callbackObject) {
     
     function init(){
         initEventListeners()
-        console.log(callbackObject)
+        console.log('... Init Input Controller. ',callbackObject)
     }
 
 
