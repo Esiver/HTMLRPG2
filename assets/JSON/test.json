@@ -1,0 +1,42 @@
+[
+    {
+        "Id": 3003,
+        "Name": "Hai Sheng Yi",
+        "PortraitImagePath": "C:\\Users\\emiln\\Downloads\\DALL·E 2023-07-06 03.09.09 - portrait of peasant by Johannes Vermeer.png",
+        "Class": "C:\\Users\\emiln\\Downloads\\DALL·E 2023-07-06 03.09.09 - portrait of peasant by Johannes Vermeer.png",
+        "HomeTile": "Peasant",
+        "DialogueRefs": [
+            0
+        ],
+        "ItemList": "0",
+        "QuestList": "0",
+        "displaySelf": "Hai Sheng Yi"
+    },
+    {
+        "Id": 3008,
+        "Name": "MinMin",
+        "PortraitImagePath": "D:\\Billeder\\DALL-E\\Chinese\\Female\\DALL·E 2023-07-07 04.15.28 - portrait of Song Dynasti Chinese Female by Johannes Vermeer.png",
+        "Class": "D:\\Billeder\\DALL-E\\Chinese\\Female\\DALL·E 2023-07-07 04.15.28 - portrait of Song Dynasti Chinese Female by Johannes Vermeer.png",
+        "HomeTile": "Warrior",
+        "DialogueRefs": [
+            1,
+            2
+        ],
+        "ItemList": "0",
+        "QuestList": "0",
+        "displaySelf": "MinMin"
+    },
+    {
+        "Id": 3009,
+        "Name": "Lao Ye",
+        "PortraitImagePath": "D:\\Billeder\\DALL-E\\Chinese\\Male\\DALL·E 2023-07-07 04.15.16 - portrait of Song Dynasti Chinese Warrior by Johannes Vermeer.png",
+        "Class": "D:\\Billeder\\DALL-E\\Chinese\\Male\\DALL·E 2023-07-07 04.15.16 - portrait of Song Dynasti Chinese Warrior by Johannes Vermeer.png",
+        "HomeTile": "Sage",
+        "DialogueRefs": [
+            1
+        ],
+        "ItemList": "1",
+        "QuestList": "1",
+        "displaySelf": "Lao Ye"
+    }
+]

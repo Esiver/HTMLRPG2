@@ -34,13 +34,14 @@ GAME.TileController = function (settings, gameState) {
                 worldSettings.tileWidth, 
                 worldSettings.tileHeight
             );
-            if (thumbnail != null) {
+            if (thumbnail != null && typeof thumbnail != 'undefined') {
                 this.drawImg(worldSettings, thumbnail)
             }
         }
         drawImg(worldSettings, imgPath){
             let thumbImage = new Image();
             thumbImage.src = imgPath;
+            console.log(imgPath, "hej hej")
             worldSettings.ctx.drawImage(
                 thumbImage,
                 this.x * worldSettings.tileWidth, 

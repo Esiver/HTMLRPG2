@@ -153,10 +153,11 @@ GAME.EntityController = function (worldSettings,gameState){
             
             return string;
         }
-        getDialogueChildrenList(){
+        getDialogueChildrenRefList(){
             let childList = []
             if(isDefined(this.dialogue)){
-                this.dialogue.children.forEach(childId => {
+                console.log('lol', this.dialogue)
+                this.dialogue.childrenRefs.forEach(childId => {
                     childList.push(getMatchingDialogueFromId(childId))
                 })
             }
@@ -262,7 +263,7 @@ GAME.EntityController = function (worldSettings,gameState){
 
     function createEntities(entityJSON = worldSettings.jsonData.entityList){
         
-        let jsonEntityList = entityJSON.entityList
+        let jsonEntityList = entityJSON//.entityList
         let entityList = [];
         
         jsonEntityList.forEach(entityJSON => {
@@ -299,6 +300,7 @@ GAME.EntityController = function (worldSettings,gameState){
         return {gold: 10, population: 1000};
     }
     function rollCreatureStats(entityJSON){
+        
         let baseStatsObj = worldSettings.jsonData.entityBase[entityJSON.class].stats
 
         let baseBody = baseStatsObj.body;
@@ -354,6 +356,7 @@ GAME.EntityController = function (worldSettings,gameState){
     }
     function getEntityThumbnail(entityJSON){
         let thumbnailImage = 'default_thumbnail.png'
+        console.log("HEHE",entityJSON)
         if (typeof entityJSON.thumbnailImage != 'undefined'){
             thumbnailImage = entityJSON.thumbnailImage;
         }
@@ -371,6 +374,8 @@ GAME.EntityController = function (worldSettings,gameState){
 
         let portraitImage = getEntityPortrait(entityJSON)//'defaultPortrait.png'; 
         let thumbnailImage = getEntityThumbnail(entityJSON);//'defaultThumbnail.png';
+        console.log("HAHA", thumbnailImage, entityJSON)
+
         let dialogueObj;
         
         statObj = rollCreatureStats(entityJSON);

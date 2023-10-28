@@ -106,12 +106,12 @@ GAME.MarkupController = function (settings, gameState) {
 
             dialogueOptionDOM.addEventListener('click', function handleDialogueOptionClick(){
                 let dialogueOptionResponse = dialogueObject.response;
-                let dialogueChildrenId = dialogueObject.children;
+                let dialogueChildrenRefs = dialogueObject.childrenRefs;
                 let dialogueChildrenObjectList = [];
                 let parentNodeList = this.parentNode;
                 
-                if (isDefined(dialogueChildrenId) && dialogueChildrenId != null) {
-                    dialogueChildrenId.forEach(id => {
+                if (isDefined(dialogueChildrenRefs) && dialogueChildrenRefs != null) {
+                    dialogueChildrenRefs.forEach(id => {
                         let dialogueChildObject = dialogueObject.getDialogueFromId(id);
                         dialogueChildrenObjectList.push(dialogueChildObject);
                     })    
@@ -145,8 +145,7 @@ GAME.MarkupController = function (settings, gameState) {
             let updatedDialogueOptionDOM = getDialogueOptionDOM(dialogueObject);
             if(updatedDialogueOptionDOM != null){
                 container.append(updatedDialogueOptionDOM)
-
-            }
+            } 
         })
 
     }
@@ -211,7 +210,7 @@ GAME.MarkupController = function (settings, gameState) {
         let entityStatListDOM = document.createElement('ul');
         let entityWealthDOM = document.createElement('li');
         
-        let entityDialogueOptionList = entity.getDialogueChildrenList()
+        let entityDialogueOptionList = entity.getDialogueChildrenRefList()
         let entityDialogueOptionListDOM = getEntityDialogueOptionListDOM(entityDialogueOptionList);
         let entityTaskListDOM = getTaskListDOM(entity);
         let buttonClickCallback = handleSelectEntityClearButton; // todo: redo?

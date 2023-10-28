@@ -89,6 +89,7 @@ GAME.GameScreen = function (worldSettings) {
         createTiles(settings);
         createEntities();
         createQuests();
+        
 
         // setup eventlisteners
         canvas.onclick = handleMouseClick;

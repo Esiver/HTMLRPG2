@@ -8,11 +8,11 @@ GAME.DialogueController = function (settings, gameState) {
     };
 
     class Dialogue {
-        constructor(id,entry,response,children){
+        constructor(id,entry,response,childrenRefs){
             this.id = id;
             this.entry = entry;
             this.response = response;
-            this.children = children;
+            this.childrenRefs = childrenRefs;
             this.entity = null;
             
         }
@@ -29,7 +29,7 @@ GAME.DialogueController = function (settings, gameState) {
                 object.id,
                 object.entry, 
                 object.response, 
-                object.children
+                object.childrenRefs
             );
             gameState.dialogueList.push(dialogueObject);
         });

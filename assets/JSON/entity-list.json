@@ -1,41 +1,53 @@
-{
-    
-    "entityList": [
+[
         {
-            "id": 1,
-            "name": "Hai Sheng Yi",
-            "type": "creature",
-            "class": "peasant",
-            "questList": [
-                123,
-                124
-            ],
-            "itemList": [],
-            "homeTile": [8,6],
-            "portraitImage":"beastportrait_1.png",
-            "thumbnailImage":"beastportrait_1+thumbnail.png",
-            "dialogue": [8]
-
-            
+                "id": 6004,
+                "name": "Hai Gui Shen",
+                "type": "creature",
+                "portraitImage": "D:\\Billeder\\DALL-E\\Chinese\\Monster\\DALL·E 2023-07-07 04.14.05 - portrait of Chinese monster by Johannes Vermeer.png",
+                "thumbnailImage": "D:\\Billeder\\DALL-E\\Chinese\\Monster\\DALL·E 2023-07-07 04.14.05 - portrait of Chinese monster by Johannes Vermeer.png",
+                "class": "sage",
+                "homeTile": [
+                        2,
+                        2
+                ],
+                "dialogue": [
+                        1
+                ],
+                "itemList": "1",
+                "questList": "1"
         },
         {
-            "id":2,
-            "name":"Nongcun",
-            "type":"town",
-            "homeTile":[2,2],
-            "portraitImage":"town1.png",
-            "thumbnailImage":"town1.png",
-            "dialogue":[201]
-
+                "id": 7003,
+                "name": "Honglian Gui",
+                "type": "creature",
+                "portraitImage": "DALL·E 2023-07-07 04.14.15 - portrait of Chinese monster by Johannes Vermeer.png",
+                "thumbnailImage": "DALL·E 2023-07-07 04.14.15 - portrait of Chinese monster by Johannes Vermeer.png",
+                "class": "peasant",
+                "homeTile": [
+                        1,
+                        1
+                ],
+                "dialogue": [
+                        2
+                ],
+                "itemList": "2",
+                "questList": "2"
         },
         {
-            "id":3,
-            "name":"Nongcun 2",
-            "type":"town",
-            "homeTile":[6,4],
-            "portraitImage":"town1.png",
-            "thumbnailImage":"town1.png"
+                "id": 8003,
+                "name": "Aoman Gui",
+                "type": "creature",
+                "portraitImage": "DALL·E 2023-07-07 04.14.11 - portrait of Chinese monster by Johannes Vermeer.png",
+                "thumbnailImage": "DALL·E 2023-07-07 04.14.11 - portrait of Chinese monster by Johannes Vermeer.png",
+                "class": "peasant",
+                "homeTile": [
+                        8,
+                        8
+                ],
+                "dialogue": [
+                        4
+                ],
+                "itemList": "0",
+                "questList": "0"
         }
-        
-    ]
-}
+]
